@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Validação SNGPC · Natus Farma</title>
+<style>
+:root{
+  --blue:#008AC6; --blue-d:#0A6EA3; --blue-dd:#135E8E; --blue-w:#E7F3FA; --blue-ww:#F3F9FC;
+  --red:#CF2727; --red-w:#FCECEC; --amber:#A86400; --amber-w:#FFF5E2; --amber-l:#E9A23B; --green:#1E8A4C; --green-w:#E8F6EE;
+  --bg:#F3F6F9; --panel:#FFFFFF; --text:#1E2935; --muted:#617080; --line:#DDE5EC; --line2:#EEF2F6;
+  --mono:Consolas,"Cascadia Mono",ui-monospace,monospace; --radius:14px; --shadow:0 1px 2px rgba(16,40,64,.06),0 4px 14px rgba(16,40,64,.05);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button{font:inherit}
+.brandbar{height:5px;background:linear-gradient(90deg,var(--blue) 0%,#329CCE 68%,var(--red) 68%,var(--red) 100%)}
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+@media (max-width:760px){header.top{position:static}}
+header.top .in{max-width:1080px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+header.top img{height:58px;width:auto;display:block}
+header.top .sep{width:1px;align-self:stretch;background:var(--line)}
+header.top .kick{color:var(--red);letter-spacing:3px;font-size:11.5px;font-weight:600;text-transform:uppercase}
+header.top h1{margin:0;color:var(--blue-dd);font-size:25px;font-weight:600;letter-spacing:-.2px}
+header.top .sub{color:var(--muted);font-size:13.5px}
+header.top .lock{margin-left:auto;font-size:12px;background:var(--green-w);color:var(--green);padding:5px 11px;border-radius:20px;white-space:nowrap}
+.atraso{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding:6px 14px;border-radius:14px;font-size:12px;white-space:nowrap;border:1px solid transparent}
+.atraso b{font-size:14.5px}
+.atraso.ok{background:var(--green-w);color:var(--green);border-color:#9AD3B0}
+.atraso.quase{background:var(--amber-w);color:var(--amber);border-color:#F1D9A8}
+.atraso.atr{background:var(--red-w);color:var(--red);border-color:#F1C2C2}
+.atraso .sm{opacity:.85}
+.wrap{max-width:1080px;margin:0 auto;padding:4px 18px 90px}
+h2{font-size:16px;margin:26px 0 12px;display:flex;align-items:center;gap:10px;color:var(--blue-dd)}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px}
+.muted{color:var(--muted)}.mono{font-family:var(--mono)}
+/* ---------- dados ---------- */
+.inputs{display:grid;grid-template-columns:180px minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:900px){.inputs{grid-template-columns:1fr}}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.tile .lab{font-size:12px;font-weight:600;color:var(--blue-dd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.tile input[type=text]{width:100%;font-size:24px;font-weight:600;text-align:center;letter-spacing:1px;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--blue-ww);color:var(--text)}
+.tile textarea{width:100%;height:96px;resize:vertical;font:12px/1.35 var(--mono);white-space:pre;overflow:auto;border:1px dashed #B9CCDA;border-radius:10px;padding:8px 10px;background:var(--blue-ww);color:var(--text)}
+.tile input:focus,.tile textarea:focus{outline:3px solid var(--blue-w);border-color:var(--blue)}
+.ok-line{display:flex;align-items:center;gap:10px;min-height:96px}
+.ok-line .ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--green-w);color:var(--green);font-size:19px;font-weight:700}
+.ok-line .t1{font-weight:600}.ok-line .t2{font-size:12.5px;color:var(--muted)}
+.ok-line .btn{margin-left:auto}
+.err-line{color:var(--red);font-size:12.5px;margin-top:6px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+/* ---------- passos ---------- */
+.stepper{padding:12px 0 6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.stepper{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stp{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;min-width:0;text-align:left;color:var(--text)}
+.stp:hover{border-color:var(--blue)}
+.stp>div{min-width:0}
+.stp .sn{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--line2);color:var(--muted);font-weight:700;font-size:13px}
+.stp .sl{font-weight:600;font-size:13.5px;line-height:1.25}
+.stp .ss{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stp.ok .sn{background:var(--green-w);color:var(--green)}.stp.ok .ss{color:var(--green)}
+.stp.no .sn{background:var(--red);color:#fff}.stp.no .ss{color:var(--red)}
+.stp.tr .sn{background:var(--blue);color:#fff}.stp.tr .ss{color:var(--blue-d)}
+.stp.cf .sn{background:var(--amber-l);color:#fff}.stp.cf .ss{color:var(--amber)}
+.stp.now{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-w)}.stp.now .sn{background:var(--blue);color:#fff}.stp.now .ss{color:var(--blue-d)}
+.stp.wait{opacity:.7}
+h2{scroll-margin-top:104px}
+.tile input[readonly]{background:var(--line2);cursor:default}
+/* ---------- comprovante em imagem ---------- */
+.comp-img{display:block;max-width:100%;width:560px;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);margin:12px 0}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+/* ---------- classes da loja ---------- */
+.cls-tab{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.cls-tab td{padding:6px 8px;border-bottom:1px solid var(--line2)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:#fff;padding:4px 12px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--blue);color:#fff}
+.cls-mud{color:var(--amber);font-size:12px;font-weight:600}
+.h2tag{font-size:11.5px;font-weight:600;color:var(--red);background:var(--red-w);border-radius:20px;padding:2px 10px}
+/* ---------- arquivo XML ---------- */
+.xmlbox{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:2px dashed #B9CCDA;border-radius:var(--radius);padding:16px 18px;background:#fff}
+.xmlbox .xi{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--line2);font-size:21px;font-weight:700;color:var(--muted)}
+.xmlbox .txt{flex:1;min-width:260px;font-size:13px;color:var(--muted)}
+.xmlbox .txt b{display:block;font-size:15px;color:var(--text)}
+.xmlbox.wait{background:transparent}
+.xmlbox.now{border-color:var(--blue);background:var(--blue-ww);box-shadow:0 0 0 4px var(--blue-w)}.xmlbox.now .xi{background:var(--blue);color:#fff}
+.xmlbox.ok{border-style:solid;border-color:#9AD3B0}.xmlbox.ok .xi{background:var(--green-w);color:var(--green)}
+.xmlbox.err{border-color:#F1C2C2}.xmlbox.err .xi{background:var(--red-w);color:var(--red)}.xmlbox.err .txt b{color:var(--red)}
+.xmlbox.over{border-color:var(--blue);background:var(--blue-w)}
+.drop{cursor:pointer}
+.chk{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin:12px 0 14px;padding:4px 16px}
+.chk-r{display:grid;grid-template-columns:24px 180px minmax(0,1fr);gap:4px 10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+.chk-r:last-child{border-bottom:0}
+.chk-r .ci{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700}
+.chk-r.ok .ci{background:var(--green-w);color:var(--green)}.chk-r.no .ci{background:var(--red);color:#fff}.chk-r.tr .ci{background:var(--blue-w)}.chk-r.cf .ci{background:var(--amber-w)}
+.chk-r .cl{font-weight:600}
+.chk-r .ct{color:var(--muted)}
+.chk-r.no .ct{color:var(--red);font-weight:600}.chk-r.tr .ct{color:var(--blue-d);font-weight:600}.chk-r.cf .ct{color:var(--amber);font-weight:600}
+.chk-r details{grid-column:2/-1;margin-top:2px}
+@media (max-width:700px){.chk-r{grid-template-columns:24px minmax(0,1fr)}.chk-r .ct,.chk-r details{grid-column:2}}
+.uso-s{color:var(--green);font-weight:700}.uso-n{color:var(--red);font-weight:700}
+.cls{display:inline-block;margin-left:6px;padding:0 8px;border-radius:10px;background:var(--blue-w);color:var(--blue-dd);font-size:11.5px;font-weight:700;white-space:nowrap;vertical-align:1px}
+.note{display:flex;gap:10px;align-items:flex-start;background:var(--amber-w);border:1px solid #F1D9A8;border-radius:11px;padding:9px 13px;margin-top:8px;font-size:13px}
+.note .ni{flex:none;font-size:16px;line-height:1.3}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:9px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--blue-d)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--text);background:var(--line2)}
+.btn.sm{padding:5px 11px;font-size:12.5px}
+.btn.okb{border-color:#9AD3B0;color:var(--green);background:var(--green-w)}
+details.help{margin-top:10px}
+details.help>summary,details.det>summary{cursor:pointer;color:var(--blue-d);font-size:13px;user-select:none}
+.help-body{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:8px;font-size:13px}
+@media (max-width:1000px){.help-body{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.help-body{grid-template-columns:1fr}}
+.help-body ol{margin:4px 0;padding-left:18px}
+/* ---------- status ---------- */
+.banner{display:flex;gap:16px;align-items:center;border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff;margin-bottom:14px}
+.banner .big{font-size:19px;font-weight:700}
+.banner .ic{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font-size:22px;font-weight:700}
+.banner.no{border-color:#F1C2C2}.banner.no .ic{background:var(--red-w);color:var(--red)}.banner.no .big{color:var(--red)}
+.banner.tr{border-color:#B9DCEE}.banner.tr .ic{background:var(--blue-w);color:var(--blue-d)}.banner.tr .big{color:var(--blue-d)}
+.banner.ok{border-color:#9AD3B0}.banner.ok .ic{background:var(--green-w);color:var(--green)}.banner.ok .big{color:var(--green)}
+.banner .counts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill.corrigir{background:var(--red-w);color:var(--red)}.pill.trainee{background:var(--blue-w);color:var(--blue-d)}.pill.conferir{background:var(--amber-w);color:var(--amber)}.pill.ok{background:var(--green-w);color:var(--green)}
+.period{font-size:13px;color:var(--muted);margin:-4px 0 12px}
+.period b{color:var(--text)}
+/* ---------- cartões ---------- */
+.group-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.group-t.corrigir{color:var(--red)}.group-t.trainee{color:var(--blue-d)}.group-t.conferir{color:var(--amber)}.group-t.feito{color:var(--green)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--line)}
+.card.corrigir::before{background:var(--red)}.card.trainee::before{background:var(--blue)}.card.conferir::before{background:var(--amber-l)}.card.feito::before{background:var(--green)}
+.card.feito{opacity:.75}
+.c-h{padding:13px 16px 4px 20px}
+.c-title{font-weight:700;font-size:15px}
+.c-where{font-size:13px;color:var(--muted);margin-top:1px}
+.c-where b{color:var(--text);font-weight:600}
+.c-prod{font-size:13px;margin-top:2px}
+.c-b{padding:6px 16px 14px 20px}
+.fix{display:flex;gap:12px;align-items:flex-start;border-radius:11px;padding:11px 13px;margin-top:6px}
+.fix .fi{flex:none;font-size:18px;line-height:1.2}
+.fix .ft{font-size:15px;font-weight:600}
+.fix .fs{font-size:12.5px;color:var(--muted);margin-top:2px}
+.fix.corrigir{background:var(--red-w)}.fix.trainee{background:var(--blue-w)}.fix.conferir{background:var(--amber-w)}
+.fix code,.code{font-family:var(--mono);font-weight:700;background:#fff;border:1px solid var(--line);border-radius:6px;padding:0 6px}
+.arrow{color:var(--blue-d);font-weight:700;margin:0 4px}
+.why{font-size:12.5px;color:var(--muted);margin-top:8px}
+.alts{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.alts .code{color:var(--text)}
+.sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+.sel select{font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:#fff;color:var(--text);max-width:100%}
+.msgrid{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;margin-top:4px;font-size:13px}
+.msgrid .k{color:var(--muted)}
+.msgrid .from{font-family:var(--mono);font-weight:700;color:var(--red);text-decoration:line-through}
+.msgrid .to{font-family:var(--mono);font-weight:700;color:var(--green);font-size:15px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+details.det{margin-top:10px}
+details.det[open]>summary{margin-bottom:6px}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:12.5px}
+table.t th{text-align:left;font-weight:600;color:var(--muted);font-size:11.5px;border-bottom:1px solid var(--line);padding:5px 8px;white-space:nowrap}
+table.t td{border-bottom:1px solid var(--line2);padding:5px 8px;vertical-align:top}
+table.t td.n,table.t th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t tr.neg td{background:var(--red-w)}
+table.t tr.neg td.s{color:var(--red);font-weight:700}
+table.t tr.start td{color:var(--muted);font-style:italic}
+table.t tr.cur td{box-shadow:inset 0 0 0 9999px rgba(0,138,198,.08)}
+table.t td.diff{background:var(--amber-w);font-weight:600}
+.hl{background:var(--red-w);color:var(--red);font-weight:700;padding:0 2px;border-radius:3px}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--radius);background:#fff}
+/* ---------- finalizar ---------- */
+.final{border-radius:var(--radius);padding:18px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+.final.ok{border-color:#9AD3B0}.final.no{border-color:#F1C2C2}.final.tr{border-color:#B9DCEE}
+.final .big{font-size:19px;font-weight:700;margin-bottom:4px}
+.final.ok .big{color:var(--green)}.final.no .big{color:var(--red)}.final.tr .big{color:var(--blue-d)}
+.comp{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:13.5px;margin:12px 0;background:var(--blue-ww);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:560px}
+.comp dt{color:var(--muted)}.comp dd{margin:0;font-weight:600}
+.code-big{font-family:var(--mono);font-size:17px;letter-spacing:1px;color:var(--blue-dd)}
+.steps{margin:10px 0 0;padding-left:20px}.steps li{margin:3px 0}
+.msg{white-space:pre-wrap;background:var(--blue-ww);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:12.5px/1.45 var(--mono);max-width:760px;margin:10px 0}
+.qres .lot{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+.qres .lot-h{display:flex;gap:12px;align-items:center;padding:8px 12px;cursor:pointer;flex-wrap:wrap}
+.qres .lot-b{display:none;padding:0 12px 10px}
+.qres .lot.open .lot-b{display:block}
+.kv{font-size:12.5px;color:var(--muted)}.kv b{color:var(--text)}
+.clsbox{margin-top:10px;padding:10px 14px}
+.clsbox>summary{cursor:pointer;user-select:none}
+.clsbox .cls-t{font-weight:600;color:var(--blue-dd)}
+.clsbox.falta{border-color:#F1D9A8;background:var(--amber-w)}
+.cls-lock{font-weight:700;color:var(--blue-dd)}
+.consult input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;background:var(--blue-ww)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--blue-dd);color:#fff;padding:9px 16px;border-radius:9px;opacity:0;transition:.2s;pointer-events:none;z-index:50;font-size:13.5px;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="brandbar"></div>
+<header class="top"><div class="in">
+  <img src="data:image/png;base64,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" alt="Natus Farma" id="logo">
+  <div class="sep"></div>
+  <div>
+    <div class="kick">SNGPC · Farmacêuticos</div>
+    <h1>Validação SNGPC</h1>
+    <div class="sub">Mostra o que corrigir no Procfit e confere o arquivo antes de transmitir para a Anvisa.</div>
+  </div>
+  <div id="atraso" class="lock">🔒 Roda só neste computador</div>
+</div></header>
+
+<main class="wrap">
+  <nav class="stepper" id="stepper"></nav>
+  <h2 id="h-1"><span class="n">1</span> Dados</h2>
+  <div class="inputs">
+    <div class="tile">
+      <div class="lab">Filial nº</div>
+      <input type="text" id="filial" inputmode="numeric" maxlength="4" placeholder="141" autocomplete="off">
+      <div class="hint" id="st-filial">Obrigatório para o comprovante.</div>
+    </div>
+    <div class="tile" id="tile-pf">
+      <div class="lab">Resumo Geral do Procfit</div>
+      <div id="pf-box"><textarea id="pf" spellcheck="false" placeholder="Procfit → Resumo Geral → Copiar Conteúdo → clique aqui → Ctrl+V"></textarea></div>
+      <div id="st-pf"></div>
+    </div>
+    <div class="tile" id="tile-anv">
+      <div class="lab">Inventário da Anvisa</div>
+      <div id="anv-box"><textarea id="anv" spellcheck="false" placeholder="SNGPC → Finalizar Inventário → Todos → selecione a tabela → Ctrl+C → clique aqui → Ctrl+V"></textarea></div>
+      <div id="st-anv"></div>
+    </div>
+  </div>
+  <details class="help">
+    <summary>Como pegar cada dado</summary>
+    <div class="help-body">
+      <div class="tile"><b>Resumo Geral (Procfit)</b><ol><li>Abra o registro do período e clique em <b>Resumo Geral</b>.</li><li>Clique em <b>Copiar Conteúdo</b>.</li><li>Clique no quadro e tecle <b>Ctrl+V</b>.</li></ol></div>
+      <div class="tile"><b>Inventário da Anvisa</b><ol><li>No SNGPC, clique em <b>Finalizar Inventário</b>.</li><li>Selecione <b>Todos</b> e aguarde carregar.</li><li>Selecione a tabela inteira, <b>Ctrl+C</b>, clique no quadro e <b>Ctrl+V</b>.</li></ol></div>
+      <div class="tile"><b>Depois de corrigir no Procfit</b><ol><li>Copie o <b>Resumo Geral de novo</b>.</li><li>Clique em <b>Colar outro</b> e cole.</li><li>A validação é refeita na hora.</li></ol></div>
+      <div class="tile"><b>Arquivo XML (passo 3)</b><ol><li>Com os lançamentos certos, <b>gere o arquivo</b> do período no Procfit.</li><li>Arraste o <b>.zip</b> ou <b>.xml</b> para o passo 3.</li><li>Se corrigir algo depois, gere e arraste de novo.</li></ol></div>
+    </div>
+  </details>
+
+  <h2 id="h-2"><span class="n">2</span> Lançamentos e estoque</h2>
+  <div id="result"><div class="empty">Cole o Resumo Geral e o inventário da Anvisa para começar.</div></div>
+
+  <h2 id="h-3"><span class="n">3</span> Arquivo XML <span class="h2tag">obrigatório para validar</span></h2>
+  <div class="xmlbox wait" id="xmlbox">
+    <div class="xi" id="xml-ic">🔒</div>
+    <div class="txt" id="xml-txt"></div>
+    <label class="btn drop" id="drop"><input type="file" id="file" accept=".xml,.zip" hidden><span id="drop-t">Escolher arquivo</span></label>
+    <button class="btn ghost sm" id="xml-clear" hidden>Remover</button>
+  </div>
+  <div id="xmlres"></div>
+
+  <h2 id="h-4"><span class="n">4</span> Finalizar</h2>
+  <div id="final"><div class="empty">O resultado aparece aqui depois da validação.</div></div>
+
+  <details class="tile consult" style="margin-top:26px">
+    <summary style="cursor:pointer;font-weight:600;color:var(--blue-dd)">Consultar um lote ou produto</summary>
+    <input type="text" id="q" placeholder="Digite um lote, um registro MS ou parte do nome do produto" style="margin-top:10px">
+    <div id="qres" class="qres" style="margin-top:10px"></div>
+  </details>
+  <footer>Natus Farma · Validação SNGPC · versão Farma 4.5<br>Elaborado por Gabriel da Silva Monteiro</footer>
+</main>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ============================== utilitários ============================== */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else if (k === 'checked' || k === 'value' || k === 'selected') el[k] = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat(Infinity)) { if (k == null || k === false || k === '') continue; el.append(k instanceof Node ? k : document.createTextNode(String(k))); }
+  return el;
+}
+Object.defineProperty(Element.prototype, 'put', { configurable: true, value: function (...kids) { this.replaceChildren(); for (const k of kids.flat(Infinity)) { if (k == null || k === false || k === '') continue; this.append(k instanceof Node ? k : document.createTextNode(String(k))); } return this; } });
+const push = (m, k, v) => { const a = m.get(k); if (a) a.push(v); else m.set(k, [v]); };
+const addSet = (m, k, v) => { const s = m.get(k); if (s) s.add(v); else m.set(k, new Set([v])); };
+const stripAcc = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
+const normName = s => stripAcc(s).toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+const normLote = s => String(s || '').trim().toUpperCase().replace(/\s+/g, '');
+const digits = s => String(s || '').replace(/\D/g, '');
+const isoOk = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '') && !isNaN(Date.parse(s + 'T00:00:00'));
+const br = iso => isoOk(iso) ? iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : (iso || '—');
+const brs = iso => isoOk(iso) ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : (iso || '—');
+function brToIso(s) { const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(String(s || '').trim()); return m ? m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0') : null; }
+const fmtCnpj = x => { const d = digits(x); return d.length === 14 ? `${d.slice(0,2)}.${d.slice(2,5)}.${d.slice(5,8)}/${d.slice(8,12)}-${d.slice(12)}` : (x || '—'); };
+const nfmt = n => Number(n).toLocaleString('pt-BR');
+const pl = (n, s, p) => nfmt(n) + ' ' + (n === 1 ? s : (p || s + 's'));
+const cap = s => { s = String(s || ''); return s.charAt(0) + s.slice(1).toLowerCase(); };
+function overlapWords(a, b) { const A = new Set(a.split(' ').filter(w => w.length >= 2)); let n = 0; for (const w of b.split(' ')) if (w.length >= 2 && A.has(w)) n++; return n; }
+const sameWho = (a, b) => !!a && !!b && (a === b || a.includes(b) || b.includes(a) || overlapWords(a, b) >= 2);
+let toastT = null;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2800); }
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function decodeEnt(s) { return s.replace(/&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);/gi, (m, e) => { e = e.toLowerCase(); if (e === 'amp') return '&'; if (e === 'lt') return '<'; if (e === 'gt') return '>'; if (e === 'quot') return '"'; if (e === 'apos') return "'"; return String.fromCharCode(e[1] === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10)); }); }
+function bytesToLatin1(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return s; }
+function fnv(str) { let h1 = 0x811c9dc5, h2 = 0x01000193 ^ 0x5bd1e995; for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ (c + i), 2246822507) >>> 0; } return ((h1 ^ (h2 >>> 3)) >>> 0).toString(16).toUpperCase().padStart(8, '0'); }
+
+/* ============================== listas fixas ============================== */
+// produtos que precisam de atenção com classe terapêutica (código interno e registro MS)
+const CLASSE_LISTA = [
+  ['47547', '1384100220040', 'RIFOTRAT'], ['78197', '1542301670131', 'AZITROMICINA'], ['78453', '1126002020081', 'MOUNJARO 10MG'],
+  ['76532', '1037000710118', 'HELMIZOL'], ['77060', '1410706370070', 'DOXICLIN'], ['77445', '1049713540042', 'CEFALEXINA'],
+  ['77451', '1558406170036', 'LEVOFLOXACINO'], ['77394', '1126002020047', 'MOUNJARO 5MG'], ['77131', '1410700060276', 'AZITROPHAR 500MG'],
+  ['80183', '1781710070027', 'SEMAVY'], ['80182', '1781710070019', 'SEMAVY'], ['77908', '1029805600144', 'DERMACERIUM']
+];
+const CLASSE_COD = new Set(CLASSE_LISTA.map(x => x[0])), CLASSE_MS = new Set(CLASSE_LISTA.map(x => x[1]));
+function lsGet(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const filialAtual = () => digits(document.getElementById('filial').value);
+// marcações ("Já revisado", "Está certo") ficam salvas no navegador por 20 dias
+const MARK_KEY = 'natus-sngpc-marcas';
+function loadMarks() { const all = lsGet(MARK_KEY, {}) || {}, now = Date.now(), m = new Map(); for (const [k, v] of Object.entries(all)) if (v && now - v.t < 20 * 864e5) m.set(k, v.l); return m; }
+function saveMarks() { const old = lsGet(MARK_KEY, {}) || {}, out = {}, now = Date.now(); for (const [k, l] of S.done) out[k] = { l, t: (old[k] && old[k].t) || now }; lsSet(MARK_KEY, out); }
+const GLP1 = ['SEMAGLUT', 'LIRAGLUT', 'TIRZEPAT', 'DULAGLUT', 'EXENAT', 'LIXISENAT', 'OZEMPIC', 'WEGOVY', 'RYBELSUS', 'VICTOZA', 'SAXENDA', 'XULTOPHY', 'SOLIQUA', 'MOUNJARO', 'ZEPBOUND', 'TRULICITY', 'BYETTA', 'BYDUREON', 'LYXUMIA', 'SEMAVY', 'OZIVY', 'POVIZTRA', 'EXTENSIOR', 'OLIRE', 'LIRUX'];
+const KLABEL = { ENTRADA: 'Entrada', VENDA: 'Venda', TRANSF: 'Transferência', PERDA: 'Perda' };
+
+/* ============================== leitura dos dados ============================== */
+function pfKind(op) {
+  const n = normName(op);
+  if (n.startsWith('COMPRA')) return 'ENTRADA';
+  if (n.includes('TRANSF') && n.includes('ENTRADA')) return 'ENTRADA';
+  if (n.includes('TRANSF') && n.includes('SAIDA')) return 'TRANSF';
+  if (n.startsWith('VENDA')) return 'VENDA';
+  if (n.startsWith('PERDA')) return 'PERDA';
+  // devolução ao fornecedor: no arquivo da Anvisa vai como saída por perda (saidaMedicamentoPerda)
+  if (n.includes('DEVOLUCAO') && (n.includes('COMPRA') || n.includes('FORNEC'))) return 'PERDA';
+  return 'OUTRO';
+}
+function parseProcfit(text) {
+  const rows = []; let skipped = 0, looksAnvisa = false, header = false;
+  let c = { op: 0, data: 1, doc: 2, prod: 3, desc: 4, ms: 5, lote: 6, val: 7, qtd: 8, ent: 9 };
+  for (let raw of text.split(/\r?\n/)) {
+    raw = raw.replace(/^﻿/, ''); if (!raw.trim()) continue;
+    const cells = raw.split('\t'); const up = cells.map(normName);
+    if (up[0] === 'OPERACAO') {
+      if (!header) { header = true; const f = (...ks) => up.findIndex(x => ks.some(k => x.startsWith(k))); const nc = { op: f('OPERACAO'), data: f('MOVIMENTO', 'DATA'), doc: f('DOCUMENTO'), prod: f('PRODUTO'), desc: f('DESCRICAO'), ms: f('REGISTRO'), lote: f('LOTE'), val: f('VALIDADE'), qtd: f('QUANTIDADE', 'QTD'), ent: f('ENTIDADE') }; if (nc.data >= 0 && nc.ms >= 0 && nc.lote >= 0 && nc.qtd >= 0) c = nc; }
+      continue;
+    }
+    if (up.includes('REGISTRO') && up.includes('LOTE')) { looksAnvisa = true; continue; }
+    const date = brToIso(cells[c.data]), ms = digits(cells[c.ms]), qs = (cells[c.qtd] || '').trim();
+    if (!date || ms.length !== 13 || !/^\d+$/.test(qs)) { skipped++; continue; }
+    rows.push({ i: rows.length, op: (cells[c.op] || '').trim(), kind: pfKind(cells[c.op]), date, doc: (cells[c.doc] || '').trim(), prod: (cells[c.prod] || '').trim(), desc: (cells[c.desc] || '').trim().replace(/\s{2,}/g, ' '), ms, lote: (cells[c.lote] || '').trim(), L: normLote(cells[c.lote]), val: (cells[c.val] || '').trim(), qty: parseInt(qs, 10), ent: (cells[c.ent] || '').trim().replace(/\s{2,}/g, ' '), raw: cells.slice(0, 10).join('\t') });
+  }
+  const descByMs = new Map(); rows.forEach(r => { if (r.desc && !descByMs.has(r.ms)) descByMs.set(r.ms, r.desc); });
+  // Resumo colado duas vezes: muitas linhas idênticas viram saldo negativo falso em quase tudo
+  const vistas = new Set(); let dup = 0; for (const r of rows) { if (vistas.has(r.raw)) dup++; else vistas.add(r.raw); }
+  return { rows, skipped, looksAnvisa, descByMs, dup, dupErr: dup >= 5 && dup / rows.length >= 0.3 };
+}
+function parseAnvisa(text) {
+  const map = new Map(), nameByMs = new Map(); let ok = 0, skipped = 0, looksProcfit = false, dup = 0;
+  let col = { reg: 0, nome: 1, lote: 2, qtd: 3 };
+  for (let raw of text.split(/\r?\n/)) {
+    raw = raw.replace(/^﻿/, ''); if (!raw.trim()) continue;
+    let cells = raw.split('\t'); if (cells.length < 3) cells = raw.trim().split(/\s{2,}/);
+    const up = cells.map(normName);
+    if (up[0] === 'OPERACAO') looksProcfit = true;
+    if (up.includes('REGISTRO') && up.includes('LOTE')) { col = { reg: up.indexOf('REGISTRO'), nome: Math.max(up.indexOf('MEDICAMENTO'), up.indexOf('PRODUTO')), lote: up.indexOf('LOTE'), qtd: up.findIndex(x => x.startsWith('QUANT') || x === 'QTD' || x === 'QTDE') }; continue; }
+    const ms = digits(cells[col.reg]), lote = (cells[col.lote] || '').trim(), qs = (cells[col.qtd] || '').trim().replace(/\./g, '');
+    if (ms.length !== 13 || !lote || !/^-?\d+$/.test(qs)) { skipped++; continue; }
+    const key = ms + '|' + normLote(lote), nome = col.nome >= 0 ? (cells[col.nome] || '').trim() : '';
+    const e = map.get(key); if (e) { e.qty += parseInt(qs, 10); dup++; } else map.set(key, { key, ms, lote, qty: parseInt(qs, 10), nome });
+    if (nome && !nameByMs.has(ms)) nameByMs.set(ms, nome);
+    ok++;
+  }
+  // inventário colado duas vezes soma o estoque em dobro e esconde erros de saldo
+  return { map, nameByMs, ok, skipped, looksProcfit, msCount: new Set([...map.values()].map(a => a.ms)).size, dup, dupErr: dup >= 5 && dup / ok >= 0.3 };
+}
+
+/* ---------- arquivo XML do passo 3 (só leitura) ---------- */
+async function through(u8, stream) { const r = new Response(new Blob([u8]).stream().pipeThrough(stream)); return new Uint8Array(await r.arrayBuffer()); }
+async function readZipXml(buf) {
+  const u8 = new Uint8Array(buf), dv = new DataView(buf);
+  let eocd = -1; for (let i = u8.length - 22; i >= Math.max(0, u8.length - 22 - 65535); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error('O .zip parece estar corrompido.');
+  const count = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+  for (let k = 0; k < count; k++) {
+    const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nlen = dv.getUint16(p + 28, true), xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+    const name = bytesToLatin1(u8.subarray(p + 46, p + 46 + nlen)); p += 46 + nlen + xlen + clen;
+    if (!/\.xml$/i.test(name)) continue;
+    const st = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true), data = u8.subarray(st, st + csize);
+    if (method === 0) return { name: name.split(/[\\/]/).pop(), bytes: data.slice() };
+    if (method === 8) { if (typeof DecompressionStream === 'undefined') throw new Error('Este navegador não abre .zip. Descompacte e arraste o .xml.'); return { name: name.split(/[\\/]/).pop(), bytes: await through(data, new DecompressionStream('deflate-raw')) }; }
+    throw new Error('Tipo de .zip não suportado.');
+  }
+  throw new Error('O .zip não tem nenhum arquivo .xml.');
+}
+const BLOCK_RE = /[ \t]*<(entradaMedicamentos|saidaMedicamentoVendaAoConsumidor|saidaMedicamentoTransferencia|saidaMedicamentoPerda)>[\s\S]*?<\/\1>/g;
+const ITEM_RE = /<(medicamentoEntrada|medicamentoVenda|medicamentoTransferencia|medicamentoPerda)>[\s\S]*?<\/\1>/g;
+const KIND = { entradaMedicamentos: 'ENTRADA', saidaMedicamentoVendaAoConsumidor: 'VENDA', saidaMedicamentoTransferencia: 'TRANSF', saidaMedicamentoPerda: 'PERDA' };
+const DATE_TAG = { ENTRADA: 'dataRecebimentoMedicamento', VENDA: 'dataVendaMedicamento', TRANSF: 'dataTransferenciaMedicamento', PERDA: 'dataPerdaMedicamento' };
+const AMP_TEST = /&(?!(?:amp|lt|gt|quot|apos);|#\d+;|#x[0-9a-fA-F]+;)/;
+const CTRL_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F]/g;
+const reC = new Map();
+function tv(text, tag) { let re = reC.get(tag); if (!re) { re = new RegExp('<' + tag + '>([\\s\\S]*?)</' + tag + '>'); reC.set(tag, re); } const m = re.exec(text); return m ? decodeEnt(m[1]).trim() : null; }
+function parseXml(text) {
+  const head = (/<cabecalho>([\s\S]*?)<\/cabecalho>/.exec(text) || ['', ''])[1];
+  const header = { cnpj: tv(head, 'cnpjEmissor') || '', cpf: tv(head, 'cpfTransmissor') || '', ini: tv(head, 'dataInicio') || '', fim: tv(head, 'dataFim') || '' };
+  const items = [], blocks = []; let m; BLOCK_RE.lastIndex = 0;
+  while ((m = BLOCK_RE.exec(text))) {
+    const b0 = m.index;
+    const kind = KIND[m[1]], bt = m[0]; const b = { idx: blocks.length, kind, line: text.slice(0, m.index).split('\n').length, items: [] };
+    const s = bt.replace(ITEM_RE, '');
+    b.date = tv(s, DATE_TAG[kind]) || '';
+    if (kind === 'VENDA') b.f = { tipo: tv(s, 'tipoReceituarioMedicamento'), notif: tv(s, 'numeroNotificacaoMedicamento'), dataPresc: tv(s, 'dataPrescricaoMedicamento'), prescNome: tv(s, 'nomePrescritor'), crm: tv(s, 'numeroRegistroProfissional'), conselho: tv(s, 'conselhoProfissional'), uf: tv(s, 'UFConselho'), usoMed: tv(s, 'usoMedicamento'), compNome: tv(s, 'nomeComprador'), tipoDoc: tv(s, 'tipoDocumento'), doc: tv(s, 'numeroDocumento'), orgao: tv(s, 'orgaoExpedidor'), ufDoc: tv(s, 'UFEmissaoDocumento'), pacNome: tv(s, 'nome'), cid: tv(s, 'cid') };
+    else b.f = { nf: tv(s, 'numeroNotaFiscal') };
+    let im; ITEM_RE.lastIndex = 0;
+    while ((im = ITEM_RE.exec(bt))) { const t = im[0]; const qr = tv(t, 'quantidadeMedicamento') || ''; const it = { b, kind, date: b.date, msRaw: tv(t, 'registroMSMedicamento') || '', ms: digits(tv(t, 'registroMSMedicamento')), lote: tv(t, 'numeroLoteMedicamento') || '', qty: /^\d+$/.test(qr) ? parseInt(qr, 10) : NaN, qtyRaw: qr, uso: tv(t, 'usoProlongado'), classe: tv(t, 'classeTerapeutica'), pos: [b0 + im.index, b0 + im.index + t.length] }; items.push(it); b.items.push(it); }
+    blocks.push(b);
+  }
+  const lines = text.split(/\r?\n/); const amps = [];
+  lines.forEach((l, i) => { if (AMP_TEST.test(l)) amps.push({ line: i + 1, text: l.trim() }); });
+  const ctrl = (text.match(CTRL_RE) || []).length;
+  let parseErr = null;
+  if (!amps.length && !ctrl) { const doc = new DOMParser().parseFromString(text, 'application/xml'); const pe = doc.getElementsByTagName('parsererror')[0]; if (pe) parseErr = (pe.textContent || '').replace(/\s+/g, ' ').trim(); }
+  const classeByMs = new Map(); for (const it of items) if (it.classe && it.ms) addSet(classeByMs, it.ms, it.classe);
+  return { header, items, blocks, amps, ctrl, parseErr, classeByMs, isInv: /<mensagemSNGPCInventario/.test(text.slice(0, 500)) };
+}
+
+/* ============================== estado ============================== */
+const S = { pf: null, anv: null, xml: null, edit: { pf: true, anv: true }, ui: { sel: {}, qOpen: {} }, done: loadMarks() };
+function marcar(key, label) { if (label == null) S.done.delete(key); else S.done.set(key, label); saveMarks(); render(); }
+let CTX = null;
+
+/* ============================== saldos ============================== */
+function finalize(e) {
+  e.events.sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : ((b.delta > 0) - (a.delta > 0)) || (a.m.order - b.m.order));
+  let bal = e.start; e.firstNeg = null;
+  for (const ev of e.events) { bal += ev.delta; ev.bal = bal; if (bal < 0 && ev.delta < 0 && !e.firstNeg) e.firstNeg = ev; }
+  e.final = bal; e.entries = e.events.filter(v => v.delta > 0).reduce((s, v) => s + v.delta, 0); e.exits = e.events.filter(v => v.delta < 0).reduce((s, v) => s - v.delta, 0);
+  return e;
+}
+function buildLedger(movs, anv) {
+  const map = new Map();
+  for (const m of movs) {
+    let e = map.get(m.key);
+    if (!e) { const a = anv && anv.map.get(m.key); e = { key: m.key, ms: m.ms, lote: a ? a.lote : m.lote, start: a ? a.qty : 0, inAnvisa: !!a, events: [] }; map.set(m.key, e); }
+    e.events.push({ m, date: m.date, delta: m.kind === 'ENTRADA' ? m.qty : -m.qty });
+  }
+  for (const e of map.values()) finalize(e);
+  return map;
+}
+function ledgerEntry(led, anv, key) { const e = led.get(key); if (e) return e; const a = anv && anv.map.get(key); return finalize({ key, ms: key.split('|')[0], lote: a ? a.lote : key.split('|')[1], start: a ? a.qty : 0, inAnvisa: !!a, events: [] }); }
+function availAt(e, d) {
+  const days = []; for (const ev of e.events) { const last = days[days.length - 1]; if (last && last.date === ev.date) last.bal = ev.bal; else days.push({ date: ev.date, bal: ev.bal }); }
+  let carry = e.start; for (const x of days) if (x.date <= d) carry = x.bal;
+  let m = carry; for (const x of days) if (x.date > d) m = Math.min(m, x.bal);
+  return m;
+}
+
+/* ============================== contexto ============================== */
+function buildCtx() {
+  const pf = S.pf, anv = S.anv && S.anv.ok ? S.anv : null;
+  const dates = pf.rows.map(r => r.date).sort();
+  const X = S.xml && S.xml.P;
+  const mk = (ini, fim) => { const rows = pf.rows.filter(r => r.date >= ini && r.date <= fim); return { ini, fim, rows, movs: rows.filter(r => r.kind !== 'OUTRO').map(r => ({ row: r, kind: r.kind, date: r.date, ms: r.ms, lote: r.lote, L: r.L, qty: r.qty, key: r.ms + '|' + r.L, order: r.i })) }; };
+  let base = mk(dates[0], dates[dates.length - 1]), xmap = new Map(), share = 0, xok = false;
+  // o período do XML só vale se o arquivo for mesmo deste Resumo Geral
+  if (X && !X.isInv) {
+    const b2 = isoOk(X.header.ini) && isoOk(X.header.fim) ? mk(X.header.ini, X.header.fim) : base;
+    const xm = mapXml(b2.rows, X); share = xm.size / Math.max(1, b2.movs.length);
+    if (b2.movs.length && share >= 0.6) { base = b2; xmap = xm; xok = true; }
+  }
+  const { ini, fim, rows, movs } = base;
+  const led = buildLedger(movs, anv);
+  const byMs = new Map(), byLote = new Map();
+  if (anv) for (const a of anv.map.values()) { addSet(byMs, a.ms, a.key); addSet(byLote, normLote(a.lote), a.key); }
+  for (const e of led.values()) if (e.entries > 0) { addSet(byMs, e.ms, e.key); addSet(byLote, e.key.split('|')[1], e.key); }
+  const ctx = { pf, anv, ini, fim, rows, movs, led, idx: { byMs, byLote }, X, xmap, xok, share, outside: pf.rows.length - rows.length };
+  ctx.issues = analyze(ctx);
+  return ctx;
+}
+// liga cada linha do Procfit ao item do XML (para mostrar paciente, receita e uso contínuo)
+function mapXml(rows, X) {
+  const res = new Map(); const free = new Set(X.items.map((_, i) => i));
+  const passes = [x => x.kind + '|' + x.date + '|' + x.ms + '|' + normLote(x.lote), x => x.kind + '|' + x.ms + '|' + normLote(x.lote)];
+  const used = new Map();
+  for (const keyFn of passes) {
+    const g = new Map(); for (const i of free) push(g, keyFn(X.items[i]), i);
+    for (const r of rows) {
+      if (res.has(r.i) || r.kind === 'OUTRO') continue;
+      const cand = (g.get(keyFn(r)) || []).filter(i => free.has(i)); if (!cand.length) continue;
+      const who = normName(r.ent); const cw = i => X.items[i].b.f.compNome && sameWho(normName(X.items[i].b.f.compNome), who);
+      const pick = cand.find(i => X.items[i].qty === r.qty && cw(i)) ?? cand.find(i => X.items[i].qty === r.qty) ?? cand.find(cw) ?? cand[0];
+      res.set(r.i, X.items[pick]); const u = (used.get(pick) || 0) + r.qty; used.set(pick, u); if (u >= X.items[pick].qty) free.delete(pick);
+    }
+  }
+  return res;
+}
+const prodName = (ms, ctx) => ctx.pf.descByMs.get(ms) || (ctx.anv && ctx.anv.nameByMs.get(ms)) || ('Registro ' + ms);
+const anvName = (ms, ctx) => (ctx.anv && ctx.anv.nameByMs.get(ms)) || '';
+const outroPaciente = (it, r) => it && it.b.f && it.b.f.pacNome && !sameWho(normName(it.b.f.pacNome), normName(r.ent));
+const docLabel = r => r.kind === 'VENDA' ? 'Cupom ' + r.doc : r.kind === 'PERDA' ? 'Doc. ' + r.doc : 'NF ' + r.doc;
+function whereEl(r, ctx) { const it = ctx.xmap.get(r.i); return [h('b', null, docLabel(r)), ` · ${br(r.date)} · ${r.ent || '—'}`, outroPaciente(it, r) ? ` · paciente ${it.b.f.pacNome}` : null]; }
+function whereTxt(r, ctx) { const it = ctx.xmap.get(r.i); return `${docLabel(r)} · ${br(r.date)} · ${r.ent || '—'}${outroPaciente(it, r) ? ' (paciente ' + it.b.f.pacNome + ')' : ''}`; }
+// classe terapêutica como está no arquivo XML (só as entradas trazem a classe)
+const CLASSE_NOME = { 1: 'antimicrobiano', 2: 'controle especial' };
+function classeDe(r, ctx) { if (!ctx.xok) return ''; const it = ctx.xmap.get(r.i); if (it && it.classe) return it.classe; const s = ctx.X.classeByMs.get(r.ms); return s ? [...s].sort().join('/') : ''; }
+const prodLine = (r, ctx) => { const c = classeDe(r, ctx); return [prodName(r.ms, ctx), c ? h('span', { class: 'cls', title: 'Classe terapêutica no arquivo XML' }, 'classe ' + c) : null, ' · lote ', h('b', { class: 'mono' }, r.lote), ` · ${pl(r.qty, 'un.', 'un.')}`]; };
+const usoUp = it => String((it && it.uso) || '').toUpperCase();
+function rowOfItem(it, ctx) { for (const [ri, x] of ctx.xmap) if (x === it) return ctx.rows.find(r => r.i === ri); return null; }
+function glpResumo(ctx) { if (!ctx.glp.length) return 'nenhuma venda de GLP-1 no período'; const us = ctx.glp.map(r => usoUp(ctx.xmap.get(r.i))), s = us.filter(u => u === 'S').length, n = us.filter(u => u === 'N').length; return `${pl(ctx.glp.length, 'venda')} · ${s} com uso contínuo (S)${n ? ` · ${n} sem (N)` : ''}`; }
+
+/* ============================== sugestões de correção ============================== */
+function sugestoes(r, ctx) {
+  const d = r.date, ms0 = r.ms, L0 = r.L, q = r.qty, curKey = ms0 + '|' + L0;
+  const led = buildLedger(ctx.movs.filter(m => m.row !== r), ctx.anv);
+  const av = key => { const e = ledgerEntry(led, ctx.anv, key); return { avail: availAt(e, d), final: e.final, start: e.start, inAnvisa: e.inAnvisa, entries: e.entries, lote: e.lote }; };
+  const cand = new Map(); const add = (key, type) => { if (!cand.has(key)) cand.set(key, Object.assign({ key, ms: key.split('|')[0], type }, av(key))); };
+  add(curKey, 'atual');
+  for (const k of ctx.idx.byLote.get(L0) || []) add(k, 'ms');
+  for (const k of ctx.idx.byMs.get(ms0) || []) add(k, 'lote');
+  const cur = cand.get(curKey); const a0 = Math.max(0, cur.avail);
+  const sameSale = new Set(ctx.rows.filter(x => x !== r && x.doc === r.doc && x.ms === ms0).map(x => x.L));
+  const rank = { ms: 0, lote: 1 };
+  const others = [...cand.values()].filter(c => c !== cur && c.avail > 0).sort((a, c) => rank[a.type] - rank[c.type] || (sameSale.has(normLote(c.lote)) - sameSale.has(normLote(a.lote))) || c.avail - a.avail);
+  const out = [];
+  const singles = others.filter(c => c.avail >= q).map(c => ({ type: c.type, splits: [{ c, qty: q }] }));
+  const splits = (a0 > 0 && a0 < q) ? others.filter(c => c.avail >= q - a0).map(c => ({ type: c.type === 'ms' ? 'ms' : 'split', splits: [{ c: cur, qty: a0 }, { c, qty: q - a0 }] })) : [];
+  if (a0 > 0) out.push(...splits, ...singles); else out.push(...singles, ...splits);
+  if (!out.length) {
+    const pool = (a0 > 0 ? [cur] : []).concat(others.filter(c => c.type === 'lote'));
+    let need = q; const sp = [];
+    for (const c of pool) { if (need <= 0) break; const t = Math.min(c.avail, need); if (t > 0) { sp.push({ c, qty: t }); need -= t; } }
+    if (need <= 0 && sp.length > 1) out.push({ type: 'split', splits: sp });
+  }
+  return { cur, q, list: out.slice(0, 5), sameSale };
+}
+function msInfo(r, ctx) {
+  const o = sugestoes(r, ctx).list.find(x => x.type === 'ms') || null;
+  if (o) { const to = o.splits.map(s => ({ ms: s.c.ms, qty: s.qty, nome: anvName(s.c.ms, ctx) })); return { to, split: to.length > 1 }; }
+  const keys = [...(ctx.idx.byLote.get(r.L) || [])].filter(k => k.split('|')[0] !== r.ms);
+  return { to: keys.map(k => ({ ms: k.split('|')[0], qty: r.qty, nome: anvName(k.split('|')[0], ctx) })), split: false };
+}
+function msTxt(r, ctx) { const mi = msInfo(r, ctx); if (!mi.to.length) return `MS ${r.ms} → conferir na Anvisa`; return mi.split ? `dividir as ${r.qty} un.: ${mi.to.map(t => t.qty + ' no MS ' + t.ms).join(' + ')}` : `MS ${r.ms} → ${mi.to[0].ms}`; }
+
+/* ============================== análise ============================== */
+// cada item: { key, etapa: 1 (lançamentos) | 2 (arquivo XML), sev: corrigir|trainee|conferir, title, where, prod, fix, extra, why, details, msg (texto p/ trainee) }
+function analyze(ctx) {
+  const I = []; let E = 1; const add = o => { o.etapa = E; I.push(o); };
+  const { rows, X } = ctx;
+  const vendas = rows.filter(r => r.kind === 'VENDA');
+
+  if (ctx.anv) {
+    const exitKeys = [...new Set(ctx.movs.filter(m => m.kind !== 'ENTRADA').map(m => m.key))];
+    const miss = exitKeys.filter(k => !ctx.anv.map.has(k) && !(ctx.led.get(k) && ctx.led.get(k).entries > 0)).length;
+    if (exitKeys.length >= 8 && miss / exitKeys.length > 0.2) add({ key: 'anvOutra', sev: 'corrigir', order: -9, title: 'O inventário da Anvisa parece ser de outra loja', where: `${miss} de ${exitKeys.length} lotes vendidos não existem nesse inventário.`,
+      fix: fixBox('corrigir', '✏️', 'Cole o inventário atual da sua loja', 'Com o inventário errado, quase todas as vendas aparecem como erro.') });
+  }
+
+  // ---------- arquivo XML (passo 3) ----------
+  E = 2;
+  if (X && X.isInv) add({ key: 'xmlInv', sev: 'corrigir', order: -8, title: 'O arquivo arrastado é de inventário', where: 'Ele não tem as vendas e entradas do período.', fix: fixBox('corrigir', '📄', 'Arraste o arquivo de movimentação que vai ser transmitido') });
+  else if (X && !ctx.xok) add({ key: 'xmlOutro', sev: 'corrigir', order: -8, title: 'O arquivo não corresponde ao Resumo Geral', where: `Só ${Math.round(ctx.share * 100)}% das linhas do Resumo Geral foram encontradas no arquivo (período do arquivo: ${br(X.header.ini)} a ${br(X.header.fim)}).`, fix: fixBox('corrigir', '📄', 'Confira se o arquivo é da mesma loja e do mesmo período, e arraste o certo') });
+  else if (X) {
+    const agg = new Map(); const g = k => { let x = agg.get(k); if (!x) agg.set(k, x = { pf: 0, xml: 0, r: null, it: null }); return x; };
+    for (const r of rows) if (r.kind !== 'OUTRO') { const x = g(r.kind + '|' + r.ms + '|' + r.L); x.pf += r.qty; x.r = x.r || r; }
+    for (const it of X.items) if (Number.isFinite(it.qty) && it.date >= ctx.ini && it.date <= ctx.fim) { const x = g(it.kind + '|' + it.ms + '|' + normLote(it.lote)); x.xml += it.qty; x.it = x.it || it; }
+    const div = [...agg.values()].filter(x => x.pf !== x.xml);
+    if (div.length) add({ key: 'xmlDiv', sev: 'corrigir', order: -7, title: `O arquivo está diferente do Resumo Geral (${pl(div.length, 'lote')})`, where: 'O arquivo foi gerado antes da última correção no Procfit, ou o Resumo Geral colado é antigo.',
+      fix: fixBox('corrigir', '📄', 'Gere o arquivo de novo no Procfit e arraste o novo', 'O arquivo conferido aqui tem que ser o mesmo que vai ser transmitido.'),
+      details: () => tbl(['Produto', 'Lote', 'Resumo Geral', 'Arquivo'], div.map(x => { const ms = (x.r || x.it).ms; return [prodName(ms, ctx), (x.r || x.it).lote, x.pf, x.xml]; }), [2, 3]) });
+    if (X.amps.length) add({ key: 'amp', sev: 'corrigir', order: -6, title: 'Caractere "&" no arquivo', where: X.amps.map(a => a.text.replace(/<\/?[^>]+>/g, '')).join(' · '),
+      fix: fixBox('corrigir', '✏️', ['No cadastro do cliente/paciente, troque o ', h('code', null, '&'), ' por ', h('code', null, 'E'), ' e gere o arquivo de novo'], 'Com "&", a Anvisa rejeita o arquivo inteiro.'),
+      details: () => X.amps.slice(0, 10).map(a => h('div', { class: 'mono', style: 'font-size:12px' }, h('span', { class: 'muted' }, 'linha ' + a.line + ': '), a.text.split(/(&)/).map(p => p === '&' ? h('span', { class: 'hl' }, '&') : p))) });
+    if (X.ctrl || X.parseErr) add({ key: 'parse', sev: 'trainee', order: -6, title: 'O arquivo XML tem um erro de estrutura', where: X.parseErr || 'Caracteres invisíveis inválidos no arquivo.', fix: fixBox('trainee', '📞', 'Envie ao trainee antes de transmitir'), msg: 'Erro de estrutura no XML: ' + (X.parseErr || 'caracteres invisíveis') });
+    // CID: a Anvisa não aceita receita com CID informado
+    const cids = X.blocks.filter(b => b.kind === 'VENDA' && b.f.cid);
+    if (cids.length) add({ key: 'cid', sev: 'corrigir', order: -5, title: `CID preenchido em ${pl(cids.length, 'receita')}`, where: 'A Anvisa não aceita o arquivo com CID informado na receita.',
+      fix: fixBox('corrigir', '✏️', ['No Procfit, ', h('b', null, 'apague o CID'), cids.length === 1 ? ' desta receita' : ' destas receitas', ' e gere o arquivo de novo'], 'O campo CID tem que ficar vazio em todas as vendas.'),
+      extra: tbl(['Venda', 'Paciente', 'CID no arquivo'], cids.map(b => { const r = rowOfBlock(b, ctx); return [r ? `${docLabel(r)} · ${br(r.date)} · ${r.ent || b.f.compNome || '—'}` : `Venda de ${br(b.date)} · ${b.f.compNome || '—'}`, b.f.pacNome || '—', h('span', { class: 'hl' }, b.f.cid)]; })) });
+    // uso prolongado: a Anvisa só aceita S ou N maiúsculo ("valor não existe" com s/n minúsculo)
+    const usoMin = X.items.filter(it => it.uso != null && it.uso !== 'S' && it.uso !== 'N');
+    if (usoMin.length) add({ key: 'usoMin', sev: 'corrigir', order: -4, title: `Uso prolongado com valor inválido em ${pl(usoMin.length, 'item', 'itens')}`, where: 'A Anvisa só aceita S ou N maiúsculo. Com outro valor ela recusa o envio ("valor não existe").',
+      fix: fixBox('corrigir', '✏️', ['No Procfit, marque o uso prolongado como ', h('code', null, 'S'), ' ou ', h('code', null, 'N'), ' (maiúsculo) e gere o arquivo de novo'], 'Vale para qualquer produto, não só GLP-1.'),
+      extra: tbl(['Venda', 'Produto', 'Lote', 'No arquivo'], usoMin.map(it => { const r = rowOfItem(it, ctx); return [r ? `${docLabel(r)} · ${br(r.date)} · ${r.ent || '—'}` : `Venda de ${br(it.date)}`, r ? r.desc : prodName(it.ms, ctx), it.lote, h('span', { class: 'hl' }, `"${it.uso}"`)]; })) });
+    // campos do XML
+    const camposErr = [], vazios = [], recAntes = [], fora = [];
+    const REQ = [['tipo', 'tipo de receita'], ['notif', 'nº da notificação'], ['dataPresc', 'data da receita'], ['prescNome', 'prescritor'], ['crm', 'nº do conselho'], ['uf', 'UF do conselho'], ['compNome', 'comprador'], ['tipoDoc', 'tipo de documento'], ['doc', 'documento do comprador'], ['orgao', 'órgão expedidor'], ['ufDoc', 'UF do documento']];
+    for (const b of X.blocks) {
+      const row = rowOfBlock(b, ctx);
+      const wh = row ? whereTxt(row, ctx) : `${KLABEL[b.kind]} de ${br(b.date)} (linha ${b.line} do XML)`;
+      if (!isoOk(b.date)) camposErr.push([wh, 'Data do movimento vazia ou inválida']);
+      else if (isoOk(X.header.ini) && (b.date < X.header.ini || b.date > X.header.fim)) fora.push([wh, `Data ${br(b.date)} fora do período do arquivo`]);
+      if (b.kind === 'VENDA') {
+        if (isoOk(b.f.dataPresc) && isoOk(b.date) && b.f.dataPresc > b.date) recAntes.push({ b, row, wh });
+        const vz = REQ.filter(([k]) => !b.f[k]).map(([, l]) => l); if (vz.length) vazios.push([wh, vz.join(', ')]);
+      }
+      for (const it of b.items) { if (it.ms.length !== 13) camposErr.push([wh, `Registro MS inválido: ${it.msRaw || 'vazio'}`]); if (!it.lote) camposErr.push([wh, 'Lote vazio']); if (!(it.qty > 0)) camposErr.push([wh, 'Quantidade inválida: ' + (it.qtyRaw || 'vazia')]); }
+    }
+    for (const x of recAntes) add({ key: 'rec:' + x.b.idx, sev: 'corrigir', order: 1, title: 'Data da receita depois da venda', where: x.row ? whereEl(x.row, ctx) : x.wh, prod: x.row ? prodLine(x.row, ctx) : null,
+      fix: fixBox('corrigir', '✏️', ['Corrija no Procfit: receita de ', h('code', null, br(x.b.f.dataPresc)), ', venda de ', h('code', null, br(x.b.date))], 'A data da receita não pode ser depois da venda. Confira na receita qual data está errada.') });
+    if (camposErr.length) add({ key: 'campos', sev: 'corrigir', order: 1, title: `Dados inválidos no arquivo (${camposErr.length})`, where: 'A Anvisa não aceita esses campos.', fix: fixBox('corrigir', '✏️', 'Corrija no Procfit e gere o arquivo de novo'), details: () => tbl(['Onde', 'Problema'], camposErr) });
+    if (vazios.length) add({ key: 'vazios:' + fnv(vazios.join('\n')), sev: 'conferir', order: 6, title: `Campos vazios em ${pl(vazios.length, 'venda')}`, where: 'Confira se a informação deveria estar preenchida.', fix: fixBox('conferir', '🔎', 'Se faltar alguma informação da receita, complete no Procfit'), details: () => tbl(['Venda', 'Campos vazios'], vazios), canDone: 'Está certo' });
+    if (fora.length) add({ key: 'fora:' + fnv(fora.join('\n')), sev: 'conferir', order: 6, title: `Movimentos fora do período do arquivo (${fora.length})`, where: `O arquivo vai de ${br(X.header.ini)} a ${br(X.header.fim)}.`, fix: fixBox('conferir', '🔎', 'Confira a data desses movimentos'), details: () => tbl(['Movimento', 'Problema'], fora), canDone: 'Está certo' });
+    // mesmo CRM com nomes diferentes
+    const byCrm = new Map(); for (const b of X.blocks) if (b.kind === 'VENDA' && digits(b.f.crm)) push(byCrm, `${b.f.conselho || ''} ${digits(b.f.crm)}/${b.f.uf || ''}`, b);
+    for (const [k, bs] of byCrm) { const names = []; for (const b of bs) { const n = normName(b.f.prescNome); if (n && !names.some(x => sameWho(x, n))) names.push(n); }
+      if (names.length > 1) add({ key: 'crm:' + k + ':' + fnv(bs.map(b => b.date + b.f.prescNome).join('|')), sev: 'conferir', order: 5, title: 'Mesmo registro de prescritor com nomes diferentes', where: `${k}: ${names.join(' × ')}`, fix: fixBox('conferir', '🔎', 'Confira o prescritor nas receitas', 'Pode ser erro de digitação ou receita lançada com o médico errado.'),
+        details: () => tbl(['Venda', 'Prescritor'], bs.map(b => { const r = rowOfBlock(b, ctx); return [r ? whereTxt(r, ctx) : br(b.date), b.f.prescNome]; })), canDone: 'Está certo' }); }
+  }
+  E = 1;
+
+  // ---------- saldos ----------
+  if (ctx.anv) for (const e of ctx.led.values()) if (e.firstNeg) add(issueSaldo(e, ctx));
+
+  // ---------- venda lançada duas vezes ----------
+  const grp = new Map(); for (const r of vendas) push(grp, r.date + '|' + normName(r.ent) + '|' + r.ms + '|' + r.L + '|' + r.qty, r);
+  const pairDocs = new Map();
+  for (const rs of grp.values()) { const docs = [...new Set(rs.map(r => r.doc))]; if (docs.length < 2) continue; for (let i = 0; i < docs.length; i++) for (let j = i + 1; j < docs.length; j++) { const k = [docs[i], docs[j]].sort((a, b) => (+a || 0) - (+b || 0) || a.localeCompare(b)).join('|'); pairDocs.set(k, (pairDocs.get(k) || []).concat([rs.find(r => r.doc === docs[i])])); } }
+  for (const [k, rs] of pairDocs) { const [d1, d2] = k.split('|'); const r0 = rs[0];
+    add({ key: 'dup:' + k, sev: 'conferir', order: 2, title: 'Venda lançada duas vezes?', where: [h('b', null, `Cupons ${d1} e ${d2}`), ` · ${br(r0.date)} · ${r0.ent}`], prod: `${pl(rs.length, 'produto igual', 'produtos iguais')}: ${rs.map(r => `${r.desc} (lote ${r.lote}, ${r.qty} un.)`).join(' · ')}`,
+      fix: fixBox('conferir', '🔎', ['Se foi uma venda só, ', h('b', null, `cancele o cupom ${d2} no Procfit`)], 'Os dois cupons têm os mesmos produtos, lotes e quantidades, para o mesmo comprador, no mesmo dia.'),
+      details: () => cardDup(ctx, d1, d2), canDone: 'Eram duas vendas (está certo)', dupDocs: [d1, d2] }); }
+
+  // ---------- classe terapêutica ----------
+  // (a classe só existe no arquivo XML, então estes itens aparecem no passo 3)
+  const cl = rows.filter(r => r.kind === 'ENTRADA' && (CLASSE_COD.has(r.prod) || CLASSE_MS.has(r.ms)));
+  ctx.cl = cl;
+  ctx.classeOk = []; ctx.classeFix = [];
+  if (ctx.xok) {
+    E = 2;
+    // um cartão só, com cada entrada da lista de atenção e a classe que está no arquivo (sem sugerir classe)
+    if (cl.length) { const linhas = cl.map(r => ({ r, c: classeDe(r, ctx) }));
+      add({ key: 'classe:' + fnv(linhas.map(x => x.r.raw + '|' + x.c).join('\n')), sev: 'trainee', order: 3, title: `Classe terapêutica: conferir com o trainee (${pl(cl.length, 'entrada')})`, where: 'Produtos da lista de atenção que entraram no período. A classe tem que ser a que a loja tem na Anvisa.',
+        fix: fixBox('trainee', '📞', 'Envie ao trainee antes de transmitir', 'A mensagem do passo 4 já leva cada produto com a classe que está no arquivo. Não altere a classe por conta própria.'),
+        extra: tbl(['Produto', 'Nota fiscal', 'Lote', 'Qtd', 'Classe no arquivo'], linhas.map(({ r, c }) => [r.desc, `${r.doc} · ${brs(r.date)}`, r.lote, r.qty, c ? h('b', null, 'classe ' + c) : h('span', { class: 'hl' }, 'não encontrada')]), [3]),
+        msg: 'Classe terapêutica (conferir):\n' + linhas.map(({ r, c }) => `   • ${r.desc} · NF ${r.doc} · lote ${r.lote} · *${c ? 'classe ' + c : 'classe ?'}* no arquivo`).join('\n'), canDone: 'Já revisado com o trainee' }); }
+    for (const [ms, set] of X.classeByMs) if (set.size > 1) { const cs = [...set].sort().join(' e ');
+      add({ key: 'classeDiv:' + ms + ':' + cs, sev: 'trainee', order: 3, title: 'Mesmo produto com duas classes no arquivo', where: [h('b', null, prodName(ms, ctx)), ` · registro ${ms}`],
+        fix: fixBox('trainee', '📞', ['No arquivo aparece como ', h('code', null, 'classe ' + cs)], 'Envie ao trainee antes de transmitir.'), msg: `Produto com duas classes no arquivo · ${prodName(ms, ctx)} · MS ${ms} · classes ${cs}`, canDone: 'Já revisado com o trainee' }); }
+    E = 1;
+  }
+
+  // ---------- GLP-1 ----------
+  const glp = vendas.filter(r => { const n = normName(r.desc + ' ' + anvName(r.ms, ctx)); return GLP1.some(k => n.includes(k)); });
+  ctx.glp = glp;
+  if (ctx.xok) {
+    E = 2;
+    for (const r of glp) { const it = ctx.xmap.get(r.i); if (it && usoUp(it) === 'N') add({ key: 'glpN:' + r.i + ':' + r.raw, sev: 'conferir', order: 5, title: 'GLP-1 sem uso contínuo', where: whereEl(r, ctx), prod: prodLine(r, ctx),
+      fix: fixBox('conferir', '🔎', ['No arquivo está com uso prolongado ', h('code', null, 'N'), '. Se a receita for de uso contínuo, mude para ', h('code', null, 'S'), ' no Procfit e gere o arquivo de novo'], 'Confira na receita. Se ela não for de uso contínuo, marque abaixo.'), canDone: 'A receita não é de uso contínuo' }); }
+    E = 1;
+  }
+
+  // ---------- mesmo código interno com registro MS diferente no período ----------
+  const byCod = new Map(); for (const r of rows) if (r.prod && r.kind !== 'OUTRO') addSet(byCod, r.prod, r.ms);
+  for (const [cod, set] of byCod) if (set.size > 1) { const mss = [...set].sort(), rs = rows.filter(r => r.prod === cod && r.kind !== 'OUTRO');
+    const resumo = ms => { const x = rs.filter(r => r.ms === ms), ent = x.filter(r => r.kind === 'ENTRADA').length, sai = x.length - ent; return [ent ? pl(ent, 'entrada') : null, sai ? pl(sai, 'saída') : null].filter(Boolean).join(' · '); };
+    const naAnv = ms => ctx.anv && [...ctx.anv.map.values()].some(a => a.ms === ms);
+    // só avisa se algum desses registros não tem base: não está na Anvisa e não teve entrada no período
+    const temEnt = ms => rs.some(r => r.ms === ms && r.kind === 'ENTRADA');
+    if (!mss.some(ms => !naAnv(ms) && !temEnt(ms))) continue;
+    add({ key: 'codMs:' + cod + ':' + mss.join(',') + ':' + fnv(rs.map(r => r.raw).join('\n')), sev: 'trainee', order: 3, title: 'Mesmo produto com registros MS diferentes no período', where: [h('b', null, `Código ${cod}`), ` · ${rs[0].desc}`],
+      fix: fixBox('trainee', '📞', 'Envie ao trainee: o cadastro do produto mudou de registro MS', 'Entradas e saídas do mesmo produto precisam usar o registro que está na Anvisa. Não troque nada por conta própria.',
+        h('div', { class: 'msgrid' }, mss.map(ms => [h('span', { class: 'k' }, resumo(ms)), h('span', null, h('span', { class: 'mono', style: 'font-weight:700' }, ms), ' ', naAnv(ms) ? h('span', { class: 'muted' }, '· está no inventário da Anvisa') : temEnt(ms) ? h('span', { class: 'muted' }, '· entrou por nota no período') : h('b', { style: 'color:var(--red)' }, '· não está na Anvisa e não teve entrada no período'))]))),
+      details: () => tbl(['Movimento', 'Data', 'Documento', 'Registro MS', 'Lote', 'Qtd'], rs.map(r => [KLABEL[r.kind], br(r.date), docLabel(r), r.ms, r.lote, r.qty]), [5]),
+      msg: `Mesmo código ${cod} (${rs[0].desc}) com MS diferentes no período: ${mss.map(ms => `${ms} (${resumo(ms)}${naAnv(ms) ? ', na Anvisa' : temEnt(ms) ? ', entrou no período' : ', *sem base: fora da Anvisa e sem entrada*'})`).join(' × ')}`, canDone: 'Já revisado com o trainee' }); }
+
+  const outros = rows.filter(r => r.kind === 'OUTRO');
+  if (outros.length) add({ key: 'op:' + fnv(outros.map(r => r.raw).join('\n')), sev: 'conferir', order: 7, title: `Operações não reconhecidas (${outros.length})`, where: [...new Set(outros.map(r => r.op))].join(', '), fix: fixBox('conferir', '🔎', 'Se forem movimentos de controlado, fale com o trainee'), canDone: 'Está certo' });
+
+  for (const i of I) i.done = S.done.has(i.key);
+  const so = { corrigir: 0, trainee: 1, conferir: 2 };
+  I.sort((a, b) => so[a.sev] - so[b.sev] || (a.order || 0) - (b.order || 0));
+  return I;
+}
+function rowOfBlock(b, ctx) { for (const [ri, it] of ctx.xmap) if (it.b === b) return ctx.rows.find(r => r.i === ri); return null; }
+function issueSaldo(e, ctx) {
+  const L = e.key.split('|')[1], exists = e.inAnvisa || e.entries > 0;
+  const otherKeys = [...(ctx.idx.byLote.get(L) || [])].filter(k => k !== e.key);
+  const exits = e.events.filter(v => v.delta < 0);
+  let sel = S.ui.sel[e.key]; if (sel == null || !exits.some(v => v.m.row.i === sel)) sel = e.firstNeg.m.row.i;
+  const r = ctx.rows.find(x => x.i === sel);
+  const otherStock = otherKeys.some(k => availAt(ledgerEntry(ctx.led, ctx.anv, k), e.firstNeg.date) > 0);
+  let scen;
+  if (!exists && otherKeys.length) scen = 'outroMS'; else if (!exists) scen = 'naoExiste'; else if (otherStock) scen = 'saldoOutro';
+  else if (e.events.some(v => v.delta > 0 && v.date > e.firstNeg.date) && e.final >= 0) scen = 'antes'; else scen = 'insuf';
+  const titles = { outroMS: 'Registro MS do produto diferente da Anvisa', saldoOutro: 'Parte do lote está em outro registro MS', naoExiste: 'Lote não existe na Anvisa', antes: 'Venda antes da chegada do lote', insuf: 'Lote sem saldo suficiente' };
+  const sg = sugestoes(r, ctx);
+  const isMs = scen === 'outroMS' || scen === 'saldoOutro' || (sg.list[0] && sg.list[0].type === 'ms');
+  const sev = isMs ? 'trainee' : 'corrigir';
+  const entradas = e.events.filter(v => v.delta > 0).map(v => brs(v.date));
+  const why = { insuf: `O lote ${e.lote} tinha ${e.start} na Anvisa${e.entries ? ' + ' + e.entries + ' de entrada' : ''} e saíram ${e.exits} no período.`,
+    naoExiste: `O lote ${e.lote} não existe no estoque da Anvisa para este produto e não entrou em nenhuma nota do período.`,
+    antes: `A venda é de ${brs(r.date)}, mas o lote só chegou depois (${entradas.join(', ')}). Na data da venda tinha ${availAt(ledgerEntry(buildLedger(ctx.movs.filter(m => m.row !== r), ctx.anv), ctx.anv, e.key), r.date)} livre.`,
+    outroMS: `Na Anvisa, o lote ${e.lote} está cadastrado com outro registro MS.`, saldoOutro: `O lote ${e.lote} tem saldo só para parte da venda neste registro; o restante está em outro registro da Anvisa.` }[scen];
+  let fix, msg = null, extra = null;
+  if (isMs) {
+    const mi = msInfo(r, ctx);
+    fix = fixBox('trainee', '📞', 'Envie ao trainee: ajuste do registro MS no cadastro', 'Não troque o lote por conta própria.',
+      h('div', { class: 'msgrid' },
+        h('span', { class: 'k' }, mi.split ? 'Registro no Procfit' : 'Registro no Procfit (errado)'), h('span', null, h('span', { class: mi.split ? 'mono' : 'from' }, r.ms), ' ', h('span', { class: 'muted' }, prodName(r.ms, ctx))),
+        mi.to.length ? mi.to.map(t => [h('span', { class: 'k' }, mi.split ? (t.ms === r.ms ? `Fica neste registro (${t.qty} un.)` : `Vai para (${t.qty} un.)`) : 'Registro correto (Anvisa)'), h('span', null, h('span', { class: 'to' }, t.ms), ' ', h('span', { class: 'muted' }, t.nome))]) : [h('span', { class: 'k' }, 'Registro correto'), h('span', null, 'conferir na Anvisa')]));
+    msg = `${titles[scen]} · ${r.desc} · lote ${r.lote} · ${r.qty} un. · ${whereTxt(r, ctx)} · ${msTxt(r, ctx)}`;
+  } else {
+    const opts = sg.list.filter(o => o.type !== 'ms'), best = opts[0];
+    const livres = n => `${n} livre${n === 1 ? '' : 's'}`;
+    const fmt = o => o.splits.length === 1 ? ['Trocar o lote ', h('code', null, r.lote), h('span', { class: 'arrow' }, '→'), h('code', null, o.splits[0].c.lote)] : ['Dividir: ', o.splits.map((s, j) => [j ? ' + ' : '', h('b', null, s.qty + ' un.'), ' do lote ', h('code', null, s.c.lote)])];
+    const sub = o => o.splits.map(s => `lote ${s.c.lote}: ${livres(s.c.avail)} nesta data${sg.sameSale.has(normLote(s.c.lote)) && s.c !== sg.cur ? ', já usado neste cupom' : ''}`).join(' · ');
+    // lotes diferentes do atual que servem para a correção: com 2 ou mais, só o estoque físico diz qual saiu
+    const lotes = [...new Map(opts.flatMap(o => o.splits).filter(s => s.c !== sg.cur).map(s => [s.c.key, s.c])).values()];
+    const varios = lotes.length > 1;
+    fix = best ? fixBox('corrigir', '✏️', fmt(best), (varios ? 'Sugestão mais provável · ' : 'Único lote com saldo · ') + sub(best) + '.',
+      opts.length > 1 ? h('div', { class: 'alts' }, 'Outras opções: ', opts.slice(1).map((o, i) => [i ? ' · ' : '', o.splits.length === 1 ? h('span', { class: 'code' }, o.splits[0].c.lote) : o.splits.map(s => s.qty + ' do ' + s.c.lote).join(' + '), ` (${o.splits.map(s => s.c.avail).join('/')} livre)`])) : null)
+      : scen === 'antes'
+        ? fixBox('corrigir', '✏️', 'Confira a data da venda e a da nota de entrada', 'O lote só chegou depois da venda e nenhum outro lote tinha saldo. Uma das datas está errada no Procfit ou falta lançar uma nota. Se não achar, fale com o trainee.')
+        : fixBox('corrigir', '✏️', 'Nenhum lote do produto tem saldo nesta data', 'Confira no cupom se a quantidade lançada é a mesma que foi vendida, se a venda foi lançada duas vezes ou se falta lançar uma nota de entrada. Se não achar, fale com o trainee.');
+    if (varios) extra = h('div', { class: 'note' }, h('span', { class: 'ni' }, '📦'), h('div', null, h('b', null, `${lotes.length} lotes têm saldo para esta correção. `), 'Olhe a caixa no ', h('b', null, 'estoque físico'), ' e lance o lote que realmente saiu: ', lotes.map((c, j) => [j ? ' · ' : '', h('span', { class: 'code' }, c.lote), ` (${livres(c.avail)})`]), '.'));
+  }
+  const selector = exits.length > 1 ? h('div', { class: 'sel' }, 'Venda a corrigir:', h('select', { onchange: ev => { S.ui.sel[e.key] = +ev.target.value; render(); } }, exits.map(v => h('option', { value: v.m.row.i, selected: v.m.row.i === sel }, `${docLabel(v.m.row)} · ${brs(v.date)} · ${v.m.row.ent} · ${-v.delta} un.${v.bal < 0 ? '  (saldo fica negativo)' : ''}`))), h('span', null, 'Escolha a venda que saiu de outro lote.')) : null;
+  return { key: 'saldo:' + e.key + ':' + fnv(e.firstNeg.m.row.raw), sev, order: 0, title: titles[scen], where: whereEl(r, ctx), prod: prodLine(r, ctx), fix, extra, why, selector, msg, canDone: isMs ? 'Já revisado com o trainee' : null,
+    details: () => timeline(e, ctx, sel) };
+}
+
+/* ============================== peças da tela ============================== */
+function fixBox(sev, icon, title, sub, extra) { return h('div', { class: 'fix ' + sev }, h('span', { class: 'fi' }, icon), h('div', null, h('div', { class: 'ft' }, title), sub ? h('div', { class: 'fs' }, sub) : null, extra || null)); }
+function tbl(head, rows, numCols) { const nc = new Set(numCols || []); return h('div', { class: 'tablewrap' }, h('table', { class: 't' }, h('thead', null, h('tr', null, head.map((x, i) => h('th', { class: nc.has(i) ? 'n' : null }, x)))), h('tbody', null, rows.map(r => h('tr', null, r.map((c, i) => h('td', { class: nc.has(i) ? 'n' : null }, c))))))); }
+function timeline(e, ctx, sel) {
+  return h('div', { class: 'tablewrap' }, h('table', { class: 't' },
+    h('thead', null, h('tr', null, h('th', null, 'Data'), h('th', null, 'Movimento'), h('th', null, 'Documento'), h('th', null, 'Comprador / origem'), h('th', { class: 'n' }, 'Qtd'), h('th', { class: 'n' }, 'Saldo'))),
+    h('tbody', null, h('tr', { class: 'start' }, h('td'), h('td', null, 'Estoque na Anvisa'), h('td'), h('td'), h('td'), h('td', { class: 'n s' }, String(e.start))),
+      e.events.map(v => { const x = v.m.row, it = ctx.xmap.get(x.i); return h('tr', { class: (v.bal < 0 ? 'neg ' : '') + (x.i === sel ? 'cur' : '') }, h('td', null, br(v.date)), h('td', null, KLABEL[x.kind]), h('td', null, docLabel(x)), h('td', null, x.ent || '—', outroPaciente(it, x) ? h('div', { class: 'muted' }, 'Paciente: ' + it.b.f.pacNome) : null), h('td', { class: 'n' }, (v.delta > 0 ? '+' : '') + v.delta), h('td', { class: 'n s' }, String(v.bal))); }))));
+}
+function cardDup(ctx, d1, d2) {
+  const A = ctx.rows.filter(r => r.doc === d1 && r.kind === 'VENDA'), B = ctx.rows.filter(r => r.doc === d2 && r.kind === 'VENDA');
+  const xa = A.map(r => ctx.xmap.get(r.i)).find(Boolean), xb = B.map(r => ctx.xmap.get(r.i)).find(Boolean);
+  const F = [['Comprador', x => x.r.ent]];
+  if (xa && xb) F.push(['Paciente', x => x.it.b.f.pacNome || '—'], ['Prescritor', x => x.it.b.f.prescNome || '—'], ['Conselho', x => `${x.it.b.f.conselho || ''} ${x.it.b.f.crm || ''}/${x.it.b.f.uf || ''}`], ['Data da receita', x => br(x.it.b.f.dataPresc)], ['Doc. do comprador', x => x.it.b.f.doc || '—']);
+  const a = { r: A[0], it: xa }, b = { r: B[0], it: xb };
+  return h('div', null, h('div', { class: 'tablewrap' }, h('table', { class: 't' }, h('thead', null, h('tr', null, h('th'), h('th', null, 'Cupom ' + d1), h('th', null, 'Cupom ' + d2))),
+    h('tbody', null, F.map(([l, f]) => { const va = f(a), vb = f(b); return h('tr', null, h('td', { class: 'muted' }, l), h('td', { class: va !== vb ? 'diff' : '' }, va), h('td', { class: va !== vb ? 'diff' : '' }, vb)); }),
+      h('tr', null, h('td', { class: 'muted' }, 'Itens'), h('td', null, A.map(r => h('div', null, `${r.desc} · lote ${r.lote} · ${r.qty} un.`))), h('td', null, B.map(r => h('div', null, `${r.desc} · lote ${r.lote} · ${r.qty} un.`))))))),
+    xa && xb ? null : h('div', { class: 'why' }, 'Com o arquivo XML (passo 3), as receitas dos dois cupons também são comparadas aqui.'));
+}
+
+/* ============================== tela ============================== */
+function renderInputs() {
+  const fil = filialAtual(), sf = $('#st-filial');
+  sf.style.color = fil ? 'var(--green)' : ''; sf.textContent = fil ? '✓ Filial ' + fil : 'Obrigatório para o comprovante.';
+  const tileState = (id, data, okTxt, errTxt) => {
+    const box = $('#' + id + '-box'), st = $('#st-' + id), ta = $('#' + id);
+    const ok = data && okTxt;
+    if (ok && !S.edit[id]) { ta.style.display = 'none'; box.querySelector('.ok-line') && box.querySelector('.ok-line').remove(); box.append(h('div', { class: 'ok-line' }, h('span', { class: 'ic' }, '✓'), h('div', null, h('div', { class: 't1' }, okTxt[0]), h('div', { class: 't2' }, okTxt[1])), h('button', { class: 'btn sm', onclick: () => { S.edit[id] = true; ta.value = ''; if (id === 'pf') S.pf = null; else S.anv = null; render(); ta.focus(); } }, 'Colar outro'))); st.put(); }
+    else { ta.style.display = ''; const ol = box.querySelector('.ok-line'); if (ol) ol.remove(); st.put(data && errTxt ? h('div', { class: 'err-line' }, errTxt) : h('div', { class: 'hint' }, id === 'pf' ? 'Cole o Resumo Geral do período que vai transmitir.' : 'Cole o inventário atual da sua loja.')); }
+  };
+  let pfOk = null, pfErr = null;
+  if (S.pf) { if (S.pf.looksAnvisa && !S.pf.rows.length) pfErr = 'Isto parece o inventário da Anvisa. Cole no quadro da direita.'; else if (!S.pf.rows.length) pfErr = 'Não reconheci o Resumo Geral. Copie pelo botão "Copiar Conteúdo".'; else if (S.pf.dupErr) pfErr = `O Resumo Geral parece ter sido colado duas vezes (${S.pf.dup} linhas repetidas). Apague tudo deste quadro e cole uma vez só.`; else { const ds = S.pf.rows.map(r => r.date).sort(); pfOk = [pl(S.pf.rows.length, 'linha'), `${br(ds[0])} a ${br(ds[ds.length - 1])}`]; } }
+  tileState('pf', S.pf, pfOk, pfErr);
+  let anvOk = null, anvErr = null;
+  if (S.anv) { if (S.anv.looksProcfit && !S.anv.ok) anvErr = 'Isto parece o Resumo Geral. Cole no quadro do meio.'; else if (!S.anv.ok) anvErr = 'Não reconheci o inventário (registro, medicamento, lote, quantidade).'; else if (S.anv.dupErr) anvErr = `O inventário parece ter sido colado duas vezes (${S.anv.dup} lotes repetidos). Apague tudo deste quadro e cole uma vez só.`; else anvOk = [pl(S.anv.ok, 'lote'), pl(S.anv.msCount, 'produto')]; }
+  tileState('anv', S.anv, anvOk, anvErr);
+}
+/* ---------- passo 3: arquivo XML ---------- */
+const CHK = [
+  { label: 'Arquivo × Resumo Geral', pre: ['xmlDiv'], ok: c => `mesmos movimentos (${pl(c.X.items.length, 'item', 'itens')})` },
+  { label: 'Caracteres proibidos', pre: ['amp', 'parse'], ok: () => 'nenhum "&" nem erro de estrutura' },
+  { label: 'CID nas receitas', pre: ['cid'], ok: c => `nenhuma receita com CID · ${pl(c.X.blocks.filter(b => b.kind === 'VENDA').length, 'venda')} no arquivo` },
+  { label: 'Uso prolongado (S/N)', pre: ['usoMin'], ok: () => 'todos em S ou N maiúsculo' },
+  { label: 'Uso contínuo do GLP-1', pre: ['glpN'], ok: c => glpResumo(c) + (c.glp.some(r => usoUp(c.xmap.get(r.i)) === 'N') ? ', confirmado pelo farmacêutico' : ''), bad: (c, p) => `${pl(p.length, 'venda')} sem uso contínuo (N): confira abaixo`, det: c => c.glp.length ? tblGlp(c) : null, detT: 'Vendas de GLP-1 no arquivo' },
+  { label: 'Classe terapêutica', pre: ['classe'], ok: (c, mine) => mine.length ? `${pl(c.cl.length, 'entrada')} da lista de atenção · revisado com o trainee` : 'nenhum produto da lista de atenção',
+    bad: c => `${pl(c.cl.length, 'entrada')} da lista de atenção para o trainee conferir` },
+  { label: 'Dados das receitas', pre: ['rec:', 'campos', 'vazios', 'fora', 'crm:'], ok: () => 'datas, prescritor e comprador sem problemas' }
+];
+function tblGlp(c) {
+  return tbl(['Cupom', 'Data', 'Comprador', 'Produto', 'Lote', 'Uso contínuo'], c.glp.map(r => { const it = c.xmap.get(r.i), u = usoUp(it), min = it && it.uso && it.uso !== u ? ' ⚠ minúsculo' : '';
+    return [r.doc, br(r.date), [r.ent || '—', outroPaciente(it, r) ? h('div', { class: 'muted' }, 'Paciente: ' + it.b.f.pacNome) : null], r.desc, r.lote, u === 'S' ? h('span', { class: 'uso-s' }, 'S · sim' + min) : u === 'N' ? h('span', { class: 'uso-n' }, 'N · não' + min) : '?']; }));
+}
+function checklist(ctx, e2) {
+  const IC = { ok: '✓', no: '✕', tr: '📞', cf: '🔎' };
+  return h('div', { class: 'chk' }, CHK.map(c => {
+    const mine = e2.filter(i => c.pre.some(p => i.key.startsWith(p))), pend = mine.filter(i => !i.done);
+    const st = !pend.length ? 'ok' : pend.some(i => i.sev === 'corrigir') ? 'no' : pend.some(i => i.sev === 'trainee') ? 'tr' : 'cf';
+    const text = !pend.length ? c.ok(ctx, mine) : c.bad ? c.bad(ctx, pend) : pend.map(i => i.title).join(' · ');
+    const det = c.det && c.det(ctx);
+    return h('div', { class: 'chk-r ' + st }, h('span', { class: 'ci' }, IC[st]), h('span', { class: 'cl' }, c.label), h('span', { class: 'ct' }, text), det ? h('details', { class: 'det', open: true }, h('summary', null, c.detT), det) : null);
+  }));
+}
+function renderXmlStep(ctx, st) {
+  const box = $('#xmlbox'), xt = $('#xml-txt'), res = $('#xmlres');
+  const X = S.xml && S.xml.P, err = S.xml && S.xml.err;
+  $('#xml-clear').hidden = !S.xml; $('#drop-t').textContent = S.xml ? 'Trocar arquivo' : 'Escolher arquivo';
+  let cls, ic, txt;
+  const vai = () => { const p = []; if (ctx.glp.length) p.push(`uso contínuo de ${pl(ctx.glp.length, 'venda')} de GLP-1`); if (ctx.cl.length) p.push(`classe terapêutica de ${pl(ctx.cl.length, 'entrada')}`); p.push('CID nas receitas', 'uso prolongado S/N', 'caractere "&"', 'dados das receitas'); return 'Vai conferir: ' + p.join(' · ') + '.'; };
+  if (X) { const H = X.header; cls = 'ok'; ic = '✓'; txt = [h('b', null, S.xml.name), `CNPJ ${fmtCnpj(H.cnpj)} · ${br(H.ini)} a ${br(H.fim)} · ${pl(X.items.length, 'item', 'itens')}`, ctx ? ' · somente leitura' :' · cole o Resumo Geral e o inventário no passo 1 para conferir']; }
+  else if (err) { cls = 'err'; ic = '✕'; txt = [h('b', null, err), 'Arraste o .zip ou o .xml gerado pelo Procfit.']; }
+  else if (!ctx) { cls = 'wait'; ic = '🔒'; txt = [h('b', null, 'Depois dos lançamentos'), 'Quando o passo 2 estiver sem correções, gere o arquivo no Procfit e arraste aqui o .zip ou o .xml.']; }
+  else if (st.c1) { cls = 'wait'; ic = '🔒'; txt = [h('b', null, 'Primeiro resolva as correções do passo 2'), 'Depois gere o arquivo no Procfit e arraste aqui o .zip ou o .xml. ', vai()]; }
+  else { cls = 'now'; ic = '📄'; txt = [h('b', null, 'Agora gere o arquivo no Procfit e arraste aqui o .zip ou o .xml'), vai()]; }
+  box.className = 'xmlbox ' + cls; $('#xml-ic').textContent = ic; xt.put(txt);
+  $('#drop').className = 'btn drop' + (cls === 'now' ? ' primary' : '');
+  if (!X || !ctx) { res.put(); return; }
+  const errado = st.e2.some(i => i.key === 'xmlInv' || i.key === 'xmlOutro');
+  res.put(st.c1 && !errado ? h('div', { class: 'note' }, h('span', { class: 'ni' }, '↻'), h('div', null, 'Ainda há correções no passo 2. Depois de corrigir, ', h('b', null, 'gere o arquivo de novo'), ' e arraste o novo aqui.')) : null,
+    errado ? null : checklist(ctx, st.e2),
+    issueList(st.e2, '✏️ Corrigir e gerar o arquivo de novo'));
+}
+function issueList(list, tCorrigir) {
+  const pend = list.filter(i => !i.done), done = list.filter(i => i.done);
+  return [[['corrigir', tCorrigir], ['trainee', '📞 Enviar ao trainee'], ['conferir', '🔎 Conferir']].map(([s, t]) => { const l = pend.filter(i => i.sev === s); return l.length ? [h('div', { class: 'group-t ' + s }, t, h('span', { class: 'pill ' + s }, l.length)), l.map(card)] : null; }),
+    done.length ? [h('div', { class: 'group-t feito' }, '✓ Já resolvidos', h('span', { class: 'pill ok' }, done.length)), done.map(card)] : null];
+}
+function status(ctx) {
+  const e1 = ctx.issues.filter(i => i.etapa === 1), e2 = ctx.issues.filter(i => i.etapa === 2), pend = ctx.issues.filter(i => !i.done);
+  const n = (l, s) => l.filter(i => !i.done && i.sev === s).length;
+  return { e1, e2, pend, c1: n(e1, 'corrigir'), nc: n(ctx.issues, 'corrigir'), tr: pend.filter(i => i.sev === 'trainee'), nf: n(ctx.issues, 'conferir'), needX: !ctx.X, ready: !!ctx.X && !pend.length };
+}
+function renderStepper(ctx, st) {
+  const fil = digits($('#filial').value);
+  const res = l => { const p = l.filter(i => !i.done), n = s => p.filter(i => i.sev === s).length; return n('corrigir') ? ['no', pl(n('corrigir'), 'correção', 'correções')] : n('trainee') ? ['tr', pl(n('trainee'), 'item', 'itens') + ' para o trainee'] : n('conferir') ? ['cf', n('conferir') + ' a conferir'] : ['ok', 'Tudo certo']; };
+  const steps = [
+    ['Dados', ctx ? (fil ? ['ok', 'Completos'] : ['cf', 'Falta o nº da filial']) : ['now', 'Cole os dados']],
+    ['Lançamentos', ctx ? res(st.e1) : ['wait', 'Aguardando os dados']],
+    ['Arquivo XML', !ctx ? ['wait', 'Aguardando'] : !ctx.X ? (st.c1 ? ['wait', 'Depois das correções'] : ['now', 'Arraste o arquivo']) : res(st.e2)],
+    ['Finalizar', ctx && st.ready ? ['ok', 'Pode transmitir'] : ['wait', 'Ainda não transmita']]
+  ];
+  $('#stepper').put(steps.map(([l, [c, s]], i) => h('button', { class: 'stp ' + c, type: 'button', onclick: () => $('#h-' + (i + 1)).scrollIntoView({ behavior: 'smooth', block: 'start' }) }, h('span', { class: 'sn' }, c === 'ok' ? '✓' : i + 1), h('div', null, h('div', { class: 'sl' }, l), h('div', { class: 'ss' }, s)))));
+}
+function card(iss) {
+  const done = iss.done;
+  return h('div', { class: 'card ' + (done ? 'feito' : iss.sev), id: 'c-' + iss.key.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 100) },
+    h('div', { class: 'c-h' }, h('div', { class: 'c-title' }, done ? '✓ ' : '', iss.title), iss.where ? h('div', { class: 'c-where' }, iss.where) : null, iss.prod ? h('div', { class: 'c-prod' }, iss.prod) : null),
+    done ? h('div', { class: 'c-b' }, h('div', { class: 'actions' }, h('span', { class: 'muted', style: 'font-size:12.5px' }, S.done.get(iss.key)), h('button', { class: 'btn ghost sm', onclick: () => marcar(iss.key, null) }, 'Desfazer'))) :
+    h('div', { class: 'c-b' }, iss.selector || null, iss.fix || null, iss.extra || null, iss.why ? h('div', { class: 'why' }, iss.why) : null,
+      iss.canDone ? h('div', { class: 'actions' }, h('button', { class: 'btn sm okb', onclick: () => { marcar(iss.key, iss.canDone); toast('Marcado: ' + iss.canDone.toLowerCase() + '.'); } }, '✓ ' + iss.canDone)) : null,
+      iss.details ? h('details', { class: 'det' }, h('summary', null, iss.key.startsWith('saldo:') ? 'Ver os movimentos deste lote' : 'Ver detalhes'), iss.details()) : null));
+}
+function render() {
+  renderInputs();
+  const y = window.scrollY;
+  if (!S.pf || !S.pf.rows.length || S.pf.dupErr || !S.anv || !S.anv.ok || S.anv.dupErr) { CTX = null; $('#result').put(h('div', { class: 'empty' }, !S.pf || !S.pf.rows.length ? 'Cole o Resumo Geral do Procfit para começar.' : S.pf.dupErr ? 'O Resumo Geral foi colado duas vezes. Cole de novo, uma vez só (passo 1).' : !S.anv || !S.anv.ok ? 'Agora cole o inventário da Anvisa.' : 'O inventário foi colado duas vezes. Cole de novo, uma vez só (passo 1).')); renderXmlStep(null); $('#final').put(h('div', { class: 'empty' }, 'O comprovante aparece aqui quando os passos 2 e 3 estiverem certos.')); renderStepper(null); renderQuery(); renderAtraso(null); avisar(false); return; }
+  let ctx; try { ctx = buildCtx(); } catch (e) { console.error(e); CTX = null; $('#result').put(h('div', { class: 'banner no' }, h('span', { class: 'ic' }, '!'), h('div', null, h('div', { class: 'big' }, 'Não consegui analisar os dados'), String(e && e.message || e)))); renderXmlStep(null); renderStepper(null); renderAtraso(null); avisar(false); return; }
+  CTX = ctx;
+  const st = status(ctx), p1 = st.e1.filter(i => !i.done), n = s => p1.filter(i => i.sev === s).length;
+  const nc = n('corrigir'), nt = n('trainee'), nf = n('conferir');
+  const cnt = k => ctx.rows.filter(r => r.kind === k).length;
+  const banner = nc ? h('div', { class: 'banner no' }, h('span', { class: 'ic' }, '✕'), h('div', null, h('div', { class: 'big' }, `${pl(nc, 'correção', 'correções')} nos lançamentos`), h('div', { class: 'muted' }, 'Corrija no Procfit, copie o Resumo Geral de novo e cole no passo 1.')), counts())
+    : nt ? h('div', { class: 'banner tr' }, h('span', { class: 'ic' }, '📞'), h('div', null, h('div', { class: 'big' }, `${pl(nt, 'item', 'itens')} para o trainee revisar`), h('div', { class: 'muted' }, 'A mensagem para o trainee fica no passo 4.')), counts())
+    : nf ? h('div', { class: 'banner tr' }, h('span', { class: 'ic' }, '🔎'), h('div', null, h('div', { class: 'big' }, `Só falta conferir ${pl(nf, 'item', 'itens')}`), h('div', { class: 'muted' }, 'Confira e marque cada um.')), counts())
+    : h('div', { class: 'banner ok' }, h('span', { class: 'ic' }, '✓'), h('div', null, h('div', { class: 'big' }, 'Lançamentos certos'), h('div', { class: 'muted' }, ctx.X ? 'Veja a conferência do arquivo no passo 3.' : 'Agora o passo 3: gere o arquivo no Procfit e arraste.')));
+  function counts() { return h('div', { class: 'counts' }, nc ? h('span', { class: 'pill corrigir' }, nc, ' corrigir') : null, nt ? h('span', { class: 'pill trainee' }, nt, ' trainee') : null, nf ? h('span', { class: 'pill conferir' }, nf, ' conferir') : null); }
+  $('#result').put(banner,
+    h('div', { class: 'period' }, 'Período ', h('b', null, `${br(ctx.ini)} a ${br(ctx.fim)}`), ` · ${cnt('ENTRADA')} entradas · ${cnt('VENDA')} vendas · ${cnt('TRANSF')} transferências · ${cnt('PERDA')} perdas`, ctx.outside ? ` · ${pl(ctx.outside, 'linha')} do Resumo Geral fora do período do arquivo (ignoradas)` : ''),
+    issueList(st.e1, '✏️ Corrigir no Procfit'));
+  renderXmlStep(ctx, st); renderFinal(st); renderStepper(ctx, st); renderQuery(); renderAtraso(ctx); window.scrollTo(0, y);
+  avisar(st.ready, codigo(ctx));
+}
+// avisa a camada de enfeites (no fim da página) sem misturar com a lógica
+function avisar(ready, cod) { const detail = { ready: !!ready, codigo: cod || null }; window.__sngpcUltimo = detail; document.dispatchEvent(new CustomEvent('sngpc:render', { detail })); }
+/* ---------- atraso do arquivo (cabeçalho) ---------- */
+function renderAtraso(ctx) {
+  const el = $('#atraso');
+  if (!ctx) { el.className = 'lock'; el.put('🔒 Roda só neste computador'); return; }
+  const d0 = new Date(ctx.ini + 'T00:00:00'); d0.setDate(d0.getDate() - 1); // último dia já aceito pela Anvisa
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const dias = Math.round((hoje - d0) / 864e5), ult = d0.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  const [cls, txt] = dias >= 7 ? ['atr', `⏰ Atrasado há ${dias} dias`] : dias >= 5 ? ['quase', `⚠️ Quase atrasado · ${dias} dias`] : ['ok', `✓ Em dia · ${pl(Math.max(0, dias), 'dia', 'dias')}`];
+  el.className = 'atraso ' + cls; el.title = 'Conta do último dia já transmitido até hoje';
+  el.put(h('b', null, txt), h('span', { class: 'sm' }, `último dia enviado: ${ult}`));
+}
+function codigo(ctx) { const fil = digits($('#filial').value); return fnv([fil, ctx.ini, ctx.fim, ctx.rows.map(r => r.raw).join('\n'), ctx.anv.ok, ctx.X ? ctx.X.blocks.map(b => (b.f.cid || '') + '/' + b.items.map(i => [i.ms, i.lote, i.qtyRaw, i.uso || '', i.classe || ''].join(',')).join(';')).join('\n') : ''].join('|')).replace(/(.{4})(.{4})/, '$1-$2'); }
+function renderFinal(st) {
+  const ctx = CTX, el = $('#final'), fil = digits($('#filial').value);
+  const { nc, tr, nf, needX } = st, done = ctx.issues.filter(i => i.done);
+  const agora = new Date(), quando = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const cnt = k => ctx.rows.filter(r => r.kind === k).length, cod = codigo(ctx);
+  const needFil = h('div', { class: 'err-line' }, 'Preencha o número da filial no passo 1 para copiar a mensagem.');
+  const faltaX = 'Gere o arquivo no Procfit e arraste no passo 3.';
+  if (nc) { el.put(h('div', { class: 'final no' }, h('div', { class: 'big' }, 'Não transmita ainda'), `${nc === 1 ? 'Falta' : 'Faltam'} ${pl(nc, 'correção', 'correções')} (em vermelho). `, st.c1 ? 'Corrija no Procfit, copie o Resumo Geral de novo e cole no passo 1.' : 'Corrija no Procfit, gere o arquivo de novo e arraste no passo 3.', st.c1 && needX ? ' Depois, gere o arquivo e arraste no passo 3.' : '')); return; }
+  if (tr.length) {
+    const msg = [`⚠️ *SNGPC: revisão do trainee*`, `Filial: *${fil || '?'}*`, `Período: ${br(ctx.ini)} a ${br(ctx.fim)}`, `Validado em: ${quando}`, needX ? 'Arquivo XML: ainda não conferido' : `Arquivo: ${S.xml.name}`, '', '*O que revisar:*', ...tr.map((i, k) => `${k + 1}. ${i.msg || i.title}`), nf ? `\n(${pl(nf, 'item', 'itens')} ainda para o farmacêutico conferir)` : null, '', `Código: *${cod}*`].filter(x => x != null).join('\n');
+    el.put(h('div', { class: 'final tr' }, h('div', { class: 'big' }, '📞 Envie ao trainee antes de transmitir'), `${pl(tr.length, 'item precisa', 'itens precisam')} da revisão do trainee. Copie a mensagem, envie pelo WhatsApp e aguarde. Depois da revisão, marque cada item como "Já revisado com o trainee".`,
+      needX ? h('div', { class: 'note' }, h('span', { class: 'ni' }, '📄'), h('div', null, h('b', null, 'Ainda falta o passo 3 (arquivo XML). '), 'Se já consegue gerar o arquivo, arraste antes de enviar: a mensagem sai completa, com a classe terapêutica dos produtos.')) : null,
+      h('div', { class: 'msg' }, msg), fil ? h('button', { class: 'btn primary', onclick: () => copyText(msg, 'Mensagem copiada. Cole no WhatsApp do trainee.') }, '📋 Copiar mensagem para o trainee') : needFil));
+    return;
+  }
+  if (needX) { el.put(h('div', { class: 'final tr' }, h('div', { class: 'big' }, '📄 Falta o arquivo XML'), 'Os lançamentos estão certos. ', faltaX, nf ? ` Também ${nf === 1 ? 'falta conferir 1 item' : 'faltam conferir ' + nf + ' itens'} em amarelo.` : '')); return; }
+  if (nf) { el.put(h('div', { class: 'final tr' }, h('div', { class: 'big' }, '🔎 Falta conferir'), `Resolva ${nf === 1 ? 'o item' : 'os ' + nf + ' itens'} em amarelo nos passos 2 e 3. Depois o comprovante aparece aqui.`)); return; }
+  const rev = done.filter(i => i.sev === 'trainee'), conf = done.filter(i => i.sev !== 'trainee');
+  const msg = [`✅ *SNGPC VALIDADO*`, `Filial: *${fil || '?'}*`, `Período: ${br(ctx.ini)} a ${br(ctx.fim)}`, `Movimentos: ${ctx.rows.length} (${cnt('ENTRADA')} entradas · ${cnt('VENDA')} vendas · ${cnt('TRANSF')} transf. · ${cnt('PERDA')} perdas)`, `Validado em: ${quando}`, `Arquivo conferido: ${S.xml.name}`, `GLP-1: ${glpResumo(ctx)}`, 'CID: nenhuma receita com CID',
+    rev.length ? `Revisados com o trainee: ${rev.length}` : null, conf.length ? `Conferidos pelo farmacêutico: ${conf.map(i => i.title + ' (' + S.done.get(i.key).toLowerCase() + ')').join('; ')}` : null, `Código: *${cod}*`, '', '📎 Segue a imagem do comprovante.'].filter(x => x != null).join('\n');
+  if (!fil) { el.put(h('div', { class: 'final tr' }, h('div', { class: 'big' }, '✓ Tudo certo · falta o nº da filial'), 'Preencha o número da filial no passo 1 para gerar o comprovante.')); return; }
+  const cv = comprovanteCanvas({ filial: fil, periodo: `${br(ctx.ini)} a ${br(ctx.fim)}`, quando, arquivo: S.xml.name, codigo: cod, movs: `${ctx.rows.length} movimentos (${cnt('ENTRADA')} entradas · ${cnt('VENDA')} vendas)` });
+  const nomeImg = `comprovante_SNGPC_filial${fil}_${ctx.ini}_a_${ctx.fim}.png`;
+  el.put(h('div', { class: 'final ok' }, h('div', { class: 'big' }, '✓ Validado · pode transmitir'),
+    h('img', { class: 'comp-img', src: cv.toDataURL('image/png'), alt: 'Comprovante da validação' }),
+    h('div', { class: 'btnrow' }, h('button', { class: 'btn primary', onclick: () => copiarImagem(cv, nomeImg) }, '📋 Copiar imagem do comprovante'), h('button', { class: 'btn', onclick: () => baixarCanvas(cv, nomeImg) }, '⬇️ Baixar imagem'), h('button', { class: 'btn ghost', onclick: () => copyText(msg, 'Texto copiado.') }, 'Copiar texto')),
+    h('ol', { class: 'steps' }, h('li', null, h('b', null, 'Copie a imagem do comprovante'), ' (botão acima).'), h('li', null, 'Faça a ', h('b', null, 'transmissão no SNGPC'), '.'), h('li', null, 'Cole a imagem no WhatsApp do trainee.')),
+    done.length ? h('div', { class: 'why' }, `Revisados com o trainee: ${rev.length} · conferidos por você: ${conf.length}. GLP-1: ${glpResumo(ctx)}.`) : null));
+}
+/* ---------- comprovante em imagem (padrão Natus, sem enfeites) ---------- */
+function comprovanteCanvas(d) {
+  const W = 900, H = 470, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const F = '"Segoe UI",system-ui,Arial,sans-serif';
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#008AC6'; g.fillRect(0, 0, W * 0.68, 10); g.fillStyle = '#CF2727'; g.fillRect(W * 0.68, 0, W * 0.32, 10);
+  const logo = $('#logo'); if (logo && logo.naturalWidth) { const lh = 64, lw = logo.naturalWidth * lh / logo.naturalHeight; g.drawImage(logo, 40, 36, lw, lh); }
+  g.textAlign = 'right'; g.fillStyle = '#CF2727'; g.font = `600 15px ${F}`; g.fillText('COMPROVANTE · VALIDAÇÃO SNGPC', W - 40, 58);
+  g.fillStyle = '#1E8A4C'; g.font = `700 30px ${F}`; g.fillText('✓ Validado', W - 40, 94); g.textAlign = 'left';
+  g.strokeStyle = '#DDE5EC'; g.lineWidth = 1; g.beginPath(); g.moveTo(40, 124); g.lineTo(W - 40, 124); g.stroke();
+  const rows = [['Filial', d.filial], ['Período', d.periodo], ['Movimentos', d.movs], ['Validado em', d.quando], ['Arquivo', d.arquivo]];
+  let y = 168; for (const [k, v] of rows) { g.fillStyle = '#617080'; g.font = `15px ${F}`; g.fillText(k, 40, y); g.fillStyle = '#1E2935'; g.font = `600 19px ${F}`; let t = String(v || '—'); while (g.measureText(t).width > W - 260 && t.length > 4) t = t.slice(0, -2); g.fillText(t, 210, y); y += 40; }
+  g.fillStyle = '#F3F9FC'; g.strokeStyle = '#DDE5EC'; g.beginPath(); g.roundRect ? g.roundRect(40, y - 8, W - 80, 64, 12) : g.rect(40, y - 8, W - 80, 64); g.fill(); g.stroke();
+  g.fillStyle = '#617080'; g.font = `15px ${F}`; g.fillText('Código de validação', 62, y + 30);
+  g.fillStyle = '#135E8E'; g.font = `700 30px Consolas,"Cascadia Mono",monospace`; g.textAlign = 'right'; g.fillText(d.codigo, W - 62, y + 35); g.textAlign = 'left';
+  g.fillStyle = '#8A97A5'; g.font = `12.5px ${F}`; g.fillText('Natus Farma · Validação SNGPC · o código muda se qualquer dado do arquivo mudar', 40, H - 22);
+  return cv;
+}
+function baixarCanvas(cv, nome) { cv.toBlob(b => baixarBlob(b, nome), 'image/png'); }
+function baixarBlob(blob, nome) { const a = h('a', { href: URL.createObjectURL(blob), download: nome }); document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+async function copiarImagem(cv, nome) {
+  try { const blob = await new Promise(r => cv.toBlob(r, 'image/png')); await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('Imagem copiada. Cole no WhatsApp do trainee (Ctrl+V).'); }
+  catch (e) { baixarCanvas(cv, nome); toast('Não deu para copiar aqui. A imagem foi baixada: envie o arquivo pelo WhatsApp.'); }
+}
+async function copyText(t, msg) {
+  try { await navigator.clipboard.writeText(t); toast(msg); return; } catch (e) {}
+  const ta = h('textarea', { style: 'position:fixed;left:-9999px' }); ta.value = t; document.body.append(ta); ta.select();
+  try { document.execCommand('copy'); toast(msg); } catch (e) { toast('Não consegui copiar. Selecione o texto e use Ctrl+C.'); } ta.remove();
+}
+function renderQuery() {
+  const box = $('#qres'), q = $('#q').value.trim();
+  if (!CTX || !q) { box.put(q && !CTX ? h('p', { class: 'muted' }, 'Cole os dados primeiro.') : null); return; }
+  const ctx = CTX, d = digits(q), nq = normName(q), lq = normLote(q);
+  const keys = new Set([...ctx.led.keys(), ...ctx.anv.map.keys()]); const res = [];
+  for (const k of keys) { const [ms, L] = k.split('|'); const name = normName(prodName(ms, ctx) + ' ' + anvName(ms, ctx)); if ((d.length >= 6 && ms.includes(d)) || (lq.length >= 3 && L.includes(lq)) || (nq.length >= 3 && name.includes(nq))) res.push(k); }
+  res.sort((a, b) => (ctx.led.has(b) - ctx.led.has(a)) || a.localeCompare(b));
+  if (!res.length) { box.put(h('p', { class: 'muted' }, 'Nada encontrado.')); return; }
+  box.put(h('p', { class: 'why' }, `${pl(res.length, 'lote encontrado', 'lotes encontrados')}${res.length > 40 ? ' (mostrando 40)' : ''}. Clique para ver os movimentos.`),
+    res.slice(0, 40).map(k => { const e = ledgerEntry(ctx.led, ctx.anv, k), ms = k.split('|')[0], open = !!S.ui.qOpen[k], neg = e.events.some(v => v.bal < 0);
+      return h('div', { class: 'lot' + (open ? ' open' : '') },
+        h('div', { class: 'lot-h', onclick: () => { S.ui.qOpen[k] = !open; renderQuery(); } }, h('b', null, prodName(ms, ctx)), h('span', { class: 'kv mono' }, ms), h('span', { class: 'kv' }, 'Lote ', h('b', { class: 'mono' }, e.lote)), h('span', { class: 'kv' }, 'Anvisa ', h('b', null, e.start)), h('span', { class: 'kv' }, 'Entradas ', h('b', null, e.entries)), h('span', { class: 'kv' }, 'Saídas ', h('b', null, e.exits)), h('span', { class: 'kv' }, 'Saldo final ', h('b', { style: neg ? 'color:var(--red)' : '' }, e.final)), neg ? h('span', { class: 'pill corrigir' }, 'fica negativo') : h('span', { class: 'pill ok' }, 'ok')),
+        h('div', { class: 'lot-b' }, e.events.length ? timeline(e, ctx, -1) : h('p', { class: 'muted' }, 'Sem movimentos no período.'))); }));
+}
+
+/* ============================== entrada ============================== */
+async function loadXml(name, buf) {
+  try {
+    let u8 = new Uint8Array(buf), nm = name;
+    if (u8[0] === 0x50 && u8[1] === 0x4b) { const z = await readZipXml(buf); u8 = z.bytes; nm = z.name; }
+    const head = bytesToLatin1(u8.subarray(0, 300));
+    if (!/<\?xml|<mensagemSNGPC/i.test(head)) throw new Error('Este arquivo não parece ser um XML do SNGPC.');
+    const utf8 = /encoding=["']utf-?8["']/i.test(head), text = utf8 ? new TextDecoder('utf-8').decode(u8) : bytesToLatin1(u8);
+    S.xml = { name: nm, orig: name, text, utf8, P: parseXml(text) }; toast('XML carregado: ' + nm);
+  } catch (e) { console.error(e); S.xml = { err: e.message }; }
+  render();
+}
+function setPf(t) { $('#pf').value = t; S.pf = t.trim() ? parseProcfit(t) : null; S.edit.pf = !(S.pf && S.pf.rows.length); S.ui.sel = {}; render(); }
+function setAnv(t) { $('#anv').value = t; S.anv = t.trim() ? parseAnvisa(t) : null; S.edit.anv = !(S.anv && S.anv.ok); render(); }
+function init() {
+  const drop = $('#xmlbox'), file = $('#file');
+  file.addEventListener('change', async () => { const f = file.files[0]; if (f) await loadXml(f.name, await f.arrayBuffer()); file.value = ''; });
+  ['dragenter', 'dragover'].forEach(ev => document.addEventListener(ev, e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); drop.classList.add('over'); } }));
+  ['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => { if (ev === 'dragleave' && e.relatedTarget) return; drop.classList.remove('over'); }));
+  document.addEventListener('drop', async e => { if (e.dataTransfer && e.dataTransfer.files.length) { e.preventDefault(); const f = [...e.dataTransfer.files].find(x => /\.(xml|zip)$/i.test(x.name)); if (f) await loadXml(f.name, await f.arrayBuffer()); else toast('Arraste um arquivo .xml ou .zip.'); } });
+  $('#xml-clear').addEventListener('click', () => { S.xml = null; render(); });
+  $('#pf').addEventListener('input', debounce(() => setPf($('#pf').value), 400));
+  $('#anv').addEventListener('input', debounce(() => setAnv($('#anv').value), 400));
+  const fil = $('#filial'); try { fil.value = localStorage.getItem('natus-sngpc-filial') || ''; } catch (e) {}
+  fil.addEventListener('input', () => { fil.value = digits(fil.value); try { localStorage.setItem('natus-sngpc-filial', fil.value); } catch (e) {} render(); });
+  $('#q').addEventListener('input', debounce(renderQuery, 200));
+  render();
+}
+window.ValidaSNGPC = { loadXml, setPf, setAnv, get ctx() { return CTX; }, state: S, comprovanteCanvas };
+init();
+</script>
+<!-- ---------- enfeite: cápsulas nas cores da Natus nas laterais (só visual; a validação não depende disto) ---------- -->
+<style>
+.pill-layer{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.pill-layer img{position:absolute;left:0;top:0;height:auto;will-change:transform}
+@media (max-width:1259px){.pill-layer{display:none}}
+</style>
+<script>
+(() => {
+  const capsula = (a, b) => `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g transform="rotate(-35 60 60)">
+    <path d="M60 38H40a22 22 0 0 0 0 44h20z" fill="${a}"/><path d="M60 38h20a22 22 0 0 1 0 44H60z" fill="${b}"/>
+    <path d="M60 38v44" stroke="#000" stroke-opacity=".12" stroke-width="2"/>
+    <rect x="28" y="44" width="64" height="7" rx="3.5" fill="#fff" opacity=".42"/>
+    <rect x="30" y="70" width="60" height="5" rx="2.5" fill="#000" opacity=".08"/></g></svg>`;
+  const comprimido = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+    <circle cx="60" cy="62" r="34" fill="#E3EAF0"/><circle cx="60" cy="58" r="34" fill="#fff" stroke="#D5DEE6" stroke-width="2"/>
+    <path d="M38 58h44" stroke="#C3CFD9" stroke-width="5" stroke-linecap="round"/>
+    <path d="M38 40a28 28 0 0 1 22-10" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity=".9"/></svg>`;
+  const oval = c => `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g transform="rotate(25 60 60)">
+    <ellipse cx="60" cy="63" rx="36" ry="21" fill="#000" opacity=".1"/><ellipse cx="60" cy="60" rx="36" ry="21" fill="${c}"/>
+    <path d="M38 52q22-12 44 0" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".45"/></g></svg>`;
+  const url = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+  const VERM = '#CF2727', AZUL = '#008AC6', BR = '#F4F7FA';
+  const TIPOS = [capsula(VERM, AZUL), capsula(AZUL, VERM), capsula(VERM, BR), capsula(AZUL, BR), comprimido, oval(AZUL), capsula(VERM, AZUL), comprimido].map(url);
+  // sorteio fixo (mesma arrumação toda vez que abrir)
+  let seed = 20261116; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  const N = 18, reduz = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const layer = document.createElement('div'); layer.className = 'pill-layer'; layer.setAttribute('aria-hidden', 'true');
+  const ps = Array.from({ length: N }, (_, i) => {
+    const z = i % 3 === 0 ? .25 + rnd() * .15 : i % 3 === 1 ? .5 + rnd() * .2 : .82 + rnd() * .18; // fundo, meio, frente
+    const w = Math.round(26 + z * 62), im = new Image(); im.src = TIPOS[Math.floor(rnd() * TIPOS.length)]; im.alt = '';
+    im.style.width = w + 'px'; im.style.opacity = (.38 + z * .6).toFixed(2); im.style.zIndex = Math.round(z * 10);
+    im.style.filter = `blur(${((1 - z) * 2.2).toFixed(1)}px) drop-shadow(0 ${Math.round(3 + z * 7)}px ${Math.round(4 + z * 8)}px rgba(16,40,64,${(.08 + z * .14).toFixed(2)}))`;
+    layer.append(im);
+    return { im, z, w, lado: i % 2 ? 'r' : 'l', fx: .08 + rnd() * .84, fy: (i + rnd()) / N, rot: rnd() * 360, giro: (rnd() - .5) * 14, amp: 5 + z * 14, per: 3.5 + rnd() * 5, fase: rnd() * 6.3 };
+  });
+  document.body.append(layer);
+  let mx = 0, my = 0, tmx = 0, tmy = 0;
+  addEventListener('mousemove', e => { tmx = e.clientX / innerWidth - .5; tmy = e.clientY / innerHeight - .5; }, { passive: true });
+  function quadro(t) {
+    const W = innerWidth, H = innerHeight, g = Math.max(0, (W - 1080) / 2 - 16), faixa = H + 240, s = scrollY, seg = t / 1000;
+    mx += (tmx - mx) * .06; my += (tmy - my) * .06;
+    for (const p of ps) {
+      const vel = .06 + p.z * .5; // os da frente andam mais com a rolagem
+      const bob = reduz ? 0 : Math.sin(seg * 6.283 / p.per + p.fase) * p.amp;
+      const y = (((p.fy * H - s * vel + bob) % faixa) + faixa) % faixa - 120 + my * p.z * -26;
+      const xg = p.fx * Math.max(0, g - p.w) + (reduz ? 0 : Math.cos(seg * 6.283 / (p.per * 1.6) + p.fase) * p.amp * .6) + mx * p.z * -30;
+      const x = p.lado === 'l' ? 8 + xg : W - 8 - p.w - xg;
+      const r = p.rot + (reduz ? 0 : Math.sin(seg * 6.283 / (p.per * 1.3) + p.fase) * p.giro + s * vel * .05);
+      p.im.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${r.toFixed(1)}deg)`;
+    }
+    if (!reduz) requestAnimationFrame(quadro);
+  }
+  requestAnimationFrame(quadro);
+  if (reduz) { addEventListener('scroll', () => requestAnimationFrame(quadro), { passive: true }); addEventListener('resize', () => requestAnimationFrame(quadro)); }
+})();
+</script>
+</body>
+</html>
