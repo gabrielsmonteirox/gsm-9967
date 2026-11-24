@@ -37,6 +37,7 @@ header.top .lock{margin-left:auto;font-size:12px;background:var(--green-w);color
 h2{font-size:16px;margin:26px 0 12px;display:flex;align-items:center;gap:10px;color:var(--blue-dd)}
 h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px}
 .muted{color:var(--muted)}.mono{font-family:var(--mono)}
+.msmini{margin-left:6px;font-family:var(--mono);font-size:11px;color:var(--muted);opacity:.75;white-space:nowrap}
 /* ---------- dados ---------- */
 .inputs{display:grid;grid-template-columns:180px minmax(0,1fr) minmax(0,1fr);gap:12px}
 @media (max-width:900px){.inputs{grid-template-columns:1fr}}
@@ -263,7 +264,7 @@ footer{margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
     <input type="text" id="q" placeholder="Digite um lote, um registro MS ou parte do nome do produto" style="margin-top:10px">
     <div id="qres" class="qres" style="margin-top:10px"></div>
   </details>
-  <footer>Natus Farma · Validação SNGPC · versão Farma 4.5<br>Elaborado por Gabriel da Silva Monteiro</footer>
+  <footer>Natus Farma · Validação SNGPC · versão Farma 4.6<br>Elaborado por Gabriel da Silva Monteiro</footer>
 </main>
 <div id="toast"></div>
 
@@ -325,6 +326,10 @@ function loadMarks() { const all = lsGet(MARK_KEY, {}) || {}, now = Date.now(), 
 function saveMarks() { const old = lsGet(MARK_KEY, {}) || {}, out = {}, now = Date.now(); for (const [k, l] of S.done) out[k] = { l, t: (old[k] && old[k].t) || now }; lsSet(MARK_KEY, out); }
 const GLP1 = ['SEMAGLUT', 'LIRAGLUT', 'TIRZEPAT', 'DULAGLUT', 'EXENAT', 'LIXISENAT', 'OZEMPIC', 'WEGOVY', 'RYBELSUS', 'VICTOZA', 'SAXENDA', 'XULTOPHY', 'SOLIQUA', 'MOUNJARO', 'ZEPBOUND', 'TRULICITY', 'BYETTA', 'BYDUREON', 'LYXUMIA', 'SEMAVY', 'OZIVY', 'POVIZTRA', 'EXTENSIOR', 'OLIRE', 'LIRUX'];
 const KLABEL = { ENTRADA: 'Entrada', VENDA: 'Venda', TRANSF: 'Transferência', PERDA: 'Perda' };
+// o mesmo produto com dois registros MS na Anvisa (a loja pode ter caixas nos dois)
+const MS_PARES = [['1152400110053', '1010000720170']]; // RIVOTRIL 2MG C/30
+// validade "MM/AAAA" (ou "DD/MM/AAAA") → "AAAA-MM"; vazio se não der para ler
+function valYm(v) { const m = String(v || '').trim().match(/^(?:\d{1,2}\/)?(\d{1,2})\/(\d{2}|\d{4})$/); if (!m) return ''; const mm = +m[1]; if (mm < 1 || mm > 12) return ''; const yy = m[2].length === 2 ? '20' + m[2] : m[2]; return yy + '-' + String(mm).padStart(2, '0'); }
 
 /* ============================== leitura dos dados ============================== */
 function pfKind(op) {
@@ -477,7 +482,12 @@ function buildCtx() {
   const byMs = new Map(), byLote = new Map();
   if (anv) for (const a of anv.map.values()) { addSet(byMs, a.ms, a.key); addSet(byLote, normLote(a.lote), a.key); }
   for (const e of led.values()) if (e.entries > 0) { addSet(byMs, e.ms, e.key); addSet(byLote, e.key.split('|')[1], e.key); }
-  const ctx = { pf, anv, ini, fim, rows, movs, led, idx: { byMs, byLote }, X, xmap, xok, share, outside: pf.rows.length - rows.length };
+  // registros que são o mesmo produto: a lista fixa + o mesmo código do Procfit usado com mais de um registro
+  const pares = new Map(); const liga = (a, b) => { if (a !== b) { addSet(pares, a, b); addSet(pares, b, a); } };
+  for (const [a, b] of MS_PARES) liga(a, b);
+  const cods = new Map(); for (const r of pf.rows) if (r.prod) addSet(cods, r.prod, r.ms);
+  for (const s of cods.values()) { const l = [...s]; for (let i = 0; i < l.length; i++) for (let j = i + 1; j < l.length; j++) liga(l[i], l[j]); }
+  const ctx = { pf, anv, ini, fim, rows, movs, led, idx: { byMs, byLote }, pares, X, xmap, xok, share, outside: pf.rows.length - rows.length };
   ctx.issues = analyze(ctx);
   return ctx;
 }
@@ -507,6 +517,9 @@ function whereTxt(r, ctx) { const it = ctx.xmap.get(r.i); return `${docLabel(r)}
 // classe terapêutica como está no arquivo XML (só as entradas trazem a classe)
 const CLASSE_NOME = { 1: 'antimicrobiano', 2: 'controle especial' };
 function classeDe(r, ctx) { if (!ctx.xok) return ''; const it = ctx.xmap.get(r.i); if (it && it.classe) return it.classe; const s = ctx.X.classeByMs.get(r.ms); return s ? [...s].sort().join('/') : ''; }
+// registro MS no formato da Anvisa (1.1524.0011.005-3)
+const fmtMs = ms => /^\d{13}$/.test(ms) ? `${ms[0]}.${ms.slice(1, 5)}.${ms.slice(5, 9)}.${ms.slice(9, 12)}-${ms[12]}` : ms;
+const msMini = ms => h('span', { class: 'msmini', title: 'Registro MS lançado no Procfit' }, 'MS ' + fmtMs(ms));
 const prodLine = (r, ctx) => { const c = classeDe(r, ctx); return [prodName(r.ms, ctx), c ? h('span', { class: 'cls', title: 'Classe terapêutica no arquivo XML' }, 'classe ' + c) : null, ' · lote ', h('b', { class: 'mono' }, r.lote), ` · ${pl(r.qty, 'un.', 'un.')}`]; };
 const usoUp = it => String((it && it.uso) || '').toUpperCase();
 function rowOfItem(it, ctx) { for (const [ri, x] of ctx.xmap) if (x === it) return ctx.rows.find(r => r.i === ri); return null; }
@@ -521,16 +534,18 @@ function sugestoes(r, ctx) {
   add(curKey, 'atual');
   for (const k of ctx.idx.byLote.get(L0) || []) add(k, 'ms');
   for (const k of ctx.idx.byMs.get(ms0) || []) add(k, 'lote');
+  // lotes do mesmo produto no outro registro MS (ex.: Rivotril 2mg com dois registros)
+  for (const p of (ctx.pares && ctx.pares.get(ms0)) || []) for (const k of ctx.idx.byMs.get(p) || []) add(k, 'par');
   const cur = cand.get(curKey); const a0 = Math.max(0, cur.avail);
   const sameSale = new Set(ctx.rows.filter(x => x !== r && x.doc === r.doc && x.ms === ms0).map(x => x.L));
-  const rank = { ms: 0, lote: 1 };
+  const rank = { ms: 0, lote: 1, par: 2 };
   const others = [...cand.values()].filter(c => c !== cur && c.avail > 0).sort((a, c) => rank[a.type] - rank[c.type] || (sameSale.has(normLote(c.lote)) - sameSale.has(normLote(a.lote))) || c.avail - a.avail);
   const out = [];
   const singles = others.filter(c => c.avail >= q).map(c => ({ type: c.type, splits: [{ c, qty: q }] }));
   const splits = (a0 > 0 && a0 < q) ? others.filter(c => c.avail >= q - a0).map(c => ({ type: c.type === 'ms' ? 'ms' : 'split', splits: [{ c: cur, qty: a0 }, { c, qty: q - a0 }] })) : [];
   if (a0 > 0) out.push(...splits, ...singles); else out.push(...singles, ...splits);
   if (!out.length) {
-    const pool = (a0 > 0 ? [cur] : []).concat(others.filter(c => c.type === 'lote'));
+    const pool = (a0 > 0 ? [cur] : []).concat(others.filter(c => c.type === 'lote' || c.type === 'par'));
     let need = q; const sp = [];
     for (const c of pool) { if (need <= 0) break; const t = Math.min(c.avail, need); if (t > 0) { sp.push({ c, qty: t }); need -= t; } }
     if (need <= 0 && sp.length > 1) out.push({ type: 'split', splits: sp });
@@ -624,6 +639,12 @@ function analyze(ctx) {
       fix: fixBox('conferir', '🔎', ['Se foi uma venda só, ', h('b', null, `cancele o cupom ${d2} no Procfit`)], 'Os dois cupons têm os mesmos produtos, lotes e quantidades, para o mesmo comprador, no mesmo dia.'),
       details: () => cardDup(ctx, d1, d2), canDone: 'Eram duas vendas (está certo)', dupDocs: [d1, d2] }); }
 
+  // ---------- saída com validade vencida ----------
+  for (const r of rows) { if (r.kind === 'ENTRADA' || r.kind === 'OUTRO') continue; const v = valYm(r.val); if (!v || v >= r.date.slice(0, 7)) continue;
+    add({ key: 'venc:' + r.raw, sev: 'conferir', order: 4, title: r.kind === 'VENDA' ? 'Vendido com a validade vencida' : `${KLABEL[r.kind]} com a validade vencida`, where: whereEl(r, ctx), prod: prodLine(r, ctx),
+      fix: fixBox('conferir', '📅', ['Validade do lote no Procfit: ', h('code', null, r.val), ' · ', r.kind === 'VENDA' ? 'venda' : 'saída', ' em ', h('code', null, br(r.date))], 'Confira na caixa. Se a validade do lote estiver errada no cadastro, corrija no Procfit. Se o lote lançado não for o da caixa, troque o lote. Se saiu mesmo um produto vencido, fale com o trainee.'),
+      canDone: 'Está certo' }); }
+
   // ---------- classe terapêutica ----------
   // (a classe só existe no arquivo XML, então estes itens aparecem no passo 3)
   const cl = rows.filter(r => r.kind === 'ENTRADA' && (CLASSE_COD.has(r.prod) || CLASSE_MS.has(r.ms)));
@@ -706,20 +727,28 @@ function issueSaldo(e, ctx) {
   } else {
     const opts = sg.list.filter(o => o.type !== 'ms'), best = opts[0];
     const livres = n => `${n} livre${n === 1 ? '' : 's'}`;
-    const fmt = o => o.splits.length === 1 ? ['Trocar o lote ', h('code', null, r.lote), h('span', { class: 'arrow' }, '→'), h('code', null, o.splits[0].c.lote)] : ['Dividir: ', o.splits.map((s, j) => [j ? ' + ' : '', h('b', null, s.qty + ' un.'), ' do lote ', h('code', null, s.c.lote)])];
-    const sub = o => o.splits.map(s => `lote ${s.c.lote}: ${livres(s.c.avail)} nesta data${sg.sameSale.has(normLote(s.c.lote)) && s.c !== sg.cur ? ', já usado neste cupom' : ''}`).join(' · ');
-    // lotes diferentes do atual que servem para a correção: com 2 ou mais, só o estoque físico diz qual saiu
+    // lote em outro registro MS do mesmo produto: mostra o registro junto
+    const reg = c => c.ms !== r.ms ? h('span', { class: 'muted' }, ` (registro ${fmtMs(c.ms)})`) : null;
+    const fmt = o => o.splits.length === 1 ? ['Trocar o lote ', h('code', null, r.lote), h('span', { class: 'arrow' }, '→'), h('code', null, o.splits[0].c.lote), reg(o.splits[0].c)] : ['Dividir: ', o.splits.map((s, j) => [j ? ' + ' : '', h('b', null, s.qty + ' un.'), ' do lote ', h('code', null, s.c.lote), reg(s.c)])];
+    const sub = o => o.splits.map(s => `lote ${s.c.lote}: ${livres(s.c.avail)} nesta data${s.c.type === 'par' ? ' no outro registro MS do mesmo produto' : ''}${sg.sameSale.has(normLote(s.c.lote)) && s.c !== sg.cur ? ', já usado neste cupom' : ''}`).join(' · ');
+    // lotes diferentes do atual que servem para a correção: se sobram lotes além dos que a sugestão usa, só o estoque físico diz qual saiu
     const lotes = [...new Map(opts.flatMap(o => o.splits).filter(s => s.c !== sg.cur).map(s => [s.c.key, s.c])).values()];
-    const varios = lotes.length > 1;
-    fix = best ? fixBox('corrigir', '✏️', fmt(best), (varios ? 'Sugestão mais provável · ' : 'Único lote com saldo · ') + sub(best) + '.',
+    const varios = !!best && lotes.length > best.splits.filter(s => s.c !== sg.cur).length;
+    const prefixo = varios ? 'Sugestão mais provável · ' : best && best.splits.filter(s => s.c !== sg.cur).length > 1 ? 'Únicos lotes com saldo · ' : 'Único lote com saldo · ';
+    const temPar = best && best.splits.some(s => s.c.type === 'par');
+    // sem sugestão: avisa se há saldo do mesmo nome em outro registro da Anvisa (pode ser o mesmo produto)
+    const nm = normName(anvName(r.ms, ctx)), parSet = (ctx.pares && ctx.pares.get(r.ms)) || new Set();
+    const mesmoNome = !best && nm && ctx.anv ? [...ctx.anv.map.values()].filter(a => a.ms !== r.ms && !parSet.has(a.ms) && normName(anvName(a.ms, ctx)) === nm).map(a => ({ a, av: availAt(ledgerEntry(ctx.led, ctx.anv, a.key), r.date) })).filter(x => x.av > 0) : [];
+    const dicaNome = mesmoNome.length && mesmoNome.length <= 4 ? h('div', { class: 'alts' }, `Na Anvisa há saldo de ${anvName(r.ms, ctx)} em outro registro: `, mesmoNome.map((x, j) => [j ? ' · ' : '', h('span', { class: 'code' }, x.a.lote), ` (registro ${fmtMs(x.a.ms)}, ${livres(x.av)})`]), '. Se a caixa vendida for de um desses, envie ao trainee.') : null;
+    fix = best ? fixBox('corrigir', '✏️', fmt(best), prefixo + sub(best) + '.' + (temPar ? ' Confira na caixa o lote e o registro MS.' : ''),
       opts.length > 1 ? h('div', { class: 'alts' }, 'Outras opções: ', opts.slice(1).map((o, i) => [i ? ' · ' : '', o.splits.length === 1 ? h('span', { class: 'code' }, o.splits[0].c.lote) : o.splits.map(s => s.qty + ' do ' + s.c.lote).join(' + '), ` (${o.splits.map(s => s.c.avail).join('/')} livre)`])) : null)
       : scen === 'antes'
-        ? fixBox('corrigir', '✏️', 'Confira a data da venda e a da nota de entrada', 'O lote só chegou depois da venda e nenhum outro lote tinha saldo. Uma das datas está errada no Procfit ou falta lançar uma nota. Se não achar, fale com o trainee.')
-        : fixBox('corrigir', '✏️', 'Nenhum lote do produto tem saldo nesta data', 'Confira no cupom se a quantidade lançada é a mesma que foi vendida, se a venda foi lançada duas vezes ou se falta lançar uma nota de entrada. Se não achar, fale com o trainee.');
+        ? fixBox('corrigir', '✏️', 'Confira a data da venda e a da nota de entrada', 'O lote só chegou depois da venda e nenhum outro lote tinha saldo. Uma das datas está errada no Procfit ou falta lançar uma nota. Se não achar, fale com o trainee.', dicaNome)
+        : fixBox('corrigir', '✏️', 'Nenhum lote do produto tem saldo suficiente nesta data', 'Confira no cupom se a quantidade lançada é a mesma que foi vendida, se a venda foi lançada duas vezes ou se falta lançar uma nota de entrada. Se não achar, fale com o trainee.', dicaNome);
     if (varios) extra = h('div', { class: 'note' }, h('span', { class: 'ni' }, '📦'), h('div', null, h('b', null, `${lotes.length} lotes têm saldo para esta correção. `), 'Olhe a caixa no ', h('b', null, 'estoque físico'), ' e lance o lote que realmente saiu: ', lotes.map((c, j) => [j ? ' · ' : '', h('span', { class: 'code' }, c.lote), ` (${livres(c.avail)})`]), '.'));
   }
   const selector = exits.length > 1 ? h('div', { class: 'sel' }, 'Venda a corrigir:', h('select', { onchange: ev => { S.ui.sel[e.key] = +ev.target.value; render(); } }, exits.map(v => h('option', { value: v.m.row.i, selected: v.m.row.i === sel }, `${docLabel(v.m.row)} · ${brs(v.date)} · ${v.m.row.ent} · ${-v.delta} un.${v.bal < 0 ? '  (saldo fica negativo)' : ''}`))), h('span', null, 'Escolha a venda que saiu de outro lote.')) : null;
-  return { key: 'saldo:' + e.key + ':' + fnv(e.firstNeg.m.row.raw), sev, order: 0, title: titles[scen], where: whereEl(r, ctx), prod: prodLine(r, ctx), fix, extra, why, selector, msg, canDone: isMs ? 'Já revisado com o trainee' : null,
+  return { key: 'saldo:' + e.key + ':' + fnv(e.firstNeg.m.row.raw), sev, order: 0, title: titles[scen], where: whereEl(r, ctx), prod: [prodLine(r, ctx), msMini(r.ms)], fix, extra, why, selector, msg, canDone: isMs ? 'Já revisado com o trainee' : null,
     details: () => timeline(e, ctx, sel) };
 }
 
