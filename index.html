@@ -740,7 +740,7 @@ function issueSaldo(e, ctx) {
     const nm = normName(anvName(r.ms, ctx)), parSet = (ctx.pares && ctx.pares.get(r.ms)) || new Set();
     const mesmoNome = !best && nm && ctx.anv ? [...ctx.anv.map.values()].filter(a => a.ms !== r.ms && !parSet.has(a.ms) && normName(anvName(a.ms, ctx)) === nm).map(a => ({ a, av: availAt(ledgerEntry(ctx.led, ctx.anv, a.key), r.date) })).filter(x => x.av > 0) : [];
     const dicaNome = mesmoNome.length && mesmoNome.length <= 4 ? h('div', { class: 'alts' }, `Na Anvisa há saldo de ${anvName(r.ms, ctx)} em outro registro: `, mesmoNome.map((x, j) => [j ? ' · ' : '', h('span', { class: 'code' }, x.a.lote), ` (registro ${fmtMs(x.a.ms)}, ${livres(x.av)})`]), '. Se a caixa vendida for de um desses, envie ao trainee.') : null;
-    fix = best ? fixBox('corrigir', '✏️', fmt(best), prefixo + sub(best) + '.' + (temPar ? ' Confira na caixa o lote e o registro MS.' : ''),
+    fix = best ? fixBox('corrigir', '✏️', fmt(best), prefixo + sub(best) + '.' + (temPar ? ' Confira na ANVISA o lote e o registro MS.' : ''),
       opts.length > 1 ? h('div', { class: 'alts' }, 'Outras opções: ', opts.slice(1).map((o, i) => [i ? ' · ' : '', o.splits.length === 1 ? h('span', { class: 'code' }, o.splits[0].c.lote) : o.splits.map(s => s.qty + ' do ' + s.c.lote).join(' + '), ` (${o.splits.map(s => s.c.avail).join('/')} livre)`])) : null)
       : scen === 'antes'
         ? fixBox('corrigir', '✏️', 'Confira a data da venda e a da nota de entrada', 'O lote só chegou depois da venda e nenhum outro lote tinha saldo. Uma das datas está errada no Procfit ou falta lançar uma nota. Se não achar, fale com o trainee.', dicaNome)
