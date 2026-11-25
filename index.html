@@ -639,10 +639,10 @@ function analyze(ctx) {
       fix: fixBox('conferir', '🔎', ['Se foi uma venda só, ', h('b', null, `cancele o cupom ${d2} no Procfit`)], 'Os dois cupons têm os mesmos produtos, lotes e quantidades, para o mesmo comprador, no mesmo dia.'),
       details: () => cardDup(ctx, d1, d2), canDone: 'Eram duas vendas (está certo)', dupDocs: [d1, d2] }); }
 
-  // ---------- saída com validade vencida ----------
-  for (const r of rows) { if (r.kind === 'ENTRADA' || r.kind === 'OUTRO') continue; const v = valYm(r.val); if (!v || v >= r.date.slice(0, 7)) continue;
-    add({ key: 'venc:' + r.raw, sev: 'conferir', order: 4, title: r.kind === 'VENDA' ? 'Vendido com a validade vencida' : `${KLABEL[r.kind]} com a validade vencida`, where: whereEl(r, ctx), prod: prodLine(r, ctx),
-      fix: fixBox('conferir', '📅', ['Validade do lote no Procfit: ', h('code', null, r.val), ' · ', r.kind === 'VENDA' ? 'venda' : 'saída', ' em ', h('code', null, br(r.date))], 'Confira na caixa. Se a validade do lote estiver errada no cadastro, corrija no Procfit. Se o lote lançado não for o da caixa, troque o lote. Se saiu mesmo um produto vencido, fale com o trainee.'),
+  // ---------- nota de entrada com validade vencida (só entradas: corrige-se o que entra, não o que sai) ----------
+  for (const r of rows) { if (r.kind !== 'ENTRADA') continue; const v = valYm(r.val); if (!v || v >= r.date.slice(0, 7)) continue;
+    add({ key: 'venc:' + r.raw, sev: 'conferir', order: 4, title: 'Nota de entrada com a validade vencida', where: whereEl(r, ctx), prod: prodLine(r, ctx),
+      fix: fixBox('conferir', '📅', ['Validade do lote na entrada: ', h('code', null, r.val), ' · entrada em ', h('code', null, br(r.date))], 'Confira a validade na caixa e na nota. Se estiver errada no lançamento, corrija a validade do lote no Procfit. Se o produto chegou mesmo vencido, siga os procedimentos de saída e devolução.'),
       canDone: 'Está certo' }); }
 
   // ---------- classe terapêutica ----------
@@ -740,7 +740,7 @@ function issueSaldo(e, ctx) {
     const nm = normName(anvName(r.ms, ctx)), parSet = (ctx.pares && ctx.pares.get(r.ms)) || new Set();
     const mesmoNome = !best && nm && ctx.anv ? [...ctx.anv.map.values()].filter(a => a.ms !== r.ms && !parSet.has(a.ms) && normName(anvName(a.ms, ctx)) === nm).map(a => ({ a, av: availAt(ledgerEntry(ctx.led, ctx.anv, a.key), r.date) })).filter(x => x.av > 0) : [];
     const dicaNome = mesmoNome.length && mesmoNome.length <= 4 ? h('div', { class: 'alts' }, `Na Anvisa há saldo de ${anvName(r.ms, ctx)} em outro registro: `, mesmoNome.map((x, j) => [j ? ' · ' : '', h('span', { class: 'code' }, x.a.lote), ` (registro ${fmtMs(x.a.ms)}, ${livres(x.av)})`]), '. Se a caixa vendida for de um desses, envie ao trainee.') : null;
-    fix = best ? fixBox('corrigir', '✏️', fmt(best), prefixo + sub(best) + '.' + (temPar ? ' Confira na ANVISA o lote e o registro MS.' : ''),
+    fix = best ? fixBox('corrigir', '✏️', fmt(best), prefixo + sub(best) + '.' + (temPar ? ' Confira na caixa o lote e o registro MS.' : ''),
       opts.length > 1 ? h('div', { class: 'alts' }, 'Outras opções: ', opts.slice(1).map((o, i) => [i ? ' · ' : '', o.splits.length === 1 ? h('span', { class: 'code' }, o.splits[0].c.lote) : o.splits.map(s => s.qty + ' do ' + s.c.lote).join(' + '), ` (${o.splits.map(s => s.c.avail).join('/')} livre)`])) : null)
       : scen === 'antes'
         ? fixBox('corrigir', '✏️', 'Confira a data da venda e a da nota de entrada', 'O lote só chegou depois da venda e nenhum outro lote tinha saldo. Uma das datas está errada no Procfit ou falta lançar uma nota. Se não achar, fale com o trainee.', dicaNome)
